@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{lab 1 notes}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{gradient descent}
+\begin{itemize}
+\item \href{https://nyu-ds1003.github.io/mlcourse/2023/labs/Lab1.pdf}{lab slides}
+\item the first section of the lab was really just going over the lecture material 
+\item our goal is to find $\hat{f}_{n}$ the best possible model from given data 
+\item some problems can be solved analytically but this is not tractable
+\item in such cases instead of finding $\hat{f}_{n}$ ie the lowest risk function in our hypothesis space we approximate it with  $\Tilde{f}_{n}$ and hope it is good enough
+\item the idea of gradient descent is 
+\begin{itemize}
+    \item given any starting parameters, the gradient indicates the direction of local maximal change (by definition)
+    \item if we obtain new parameters by moving the old parameters along its gradient the new ones will give smaller loss (if we are careful)
+    \item we can repeat this until we are happy with the result. 
+\end{itemize}
+\item suppose we are solving a simple linear regression problem $y=\theta_{0}+\theta_{1}x$ and are concerned with the residual sum of squares ie $J(\theta_{0},\theta_{1})=\Sigma_{i=1}^{n}(y_i-(\theta_{0}-\theta_{1}x_i))^2$
+\item look on slides 18-28 there is a graphical example of gradient descent along contour lines. the point is pretty intuitive, we at any step go in the direction that will result in the largest reduction of our loss function, this point will be perpendicular to our current tangent line in a geometric sense 
+
+\subsection{gradient descent algorithm }
+\item goal find $\theta^{*}=argmin_{\theta}J(\theta)$
+\item pick an initial parameter $\theta^{0}$
+\item i=0
+\item while a terminating condition is not met 
+\begin{itemize}
+    \item compute the gradient of the loss function under the current parameters $\nabla J(\theta_{i})$
+    \item chose learning rate at iteration i $\alpha$
+    \item update parameters $\theta^{i+1}=\theta^{i}-\alpha\nablaJ(\theta_{i})$
+    \item i=i+1
+\end{itemize}
+\item return $\theta^{i}$
+\subsection{things to review}
+\item calculus (gradients, taking partial derivatives)
+\item linear algebra (matrix computation, matrix derivative) 
+\item \href{https://atmos.uw.edu/~dennis/MatrixCalculus.pdf}{review doc on matrix derivatives}
+\item \href{https://www.google.com/search?q=matrix+derivatives&client=firefox-b-1-d&sxsrf=AJOqlzWzsO3VhsZOCN54m6cyXxfVv8oBDw:1674778593507&source=lnms&tbm=vid&sa=X&ved=2ahUKEwiJupK5vOb8AhUxD1kFHa6WBmoQ_AUoAnoECAEQBA&biw=622&bih=560&dpr=1.62#fpstate=ive&vld=cid:691f0298,vid:FCWrduAxf-Q}{video on matrix derivatives}
+\end{itemize}
+\end{document}
