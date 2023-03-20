@@ -172,7 +172,27 @@ J_{\text{logistic}}(w) & = & \hat{R}_{n}(w)+\lambda\|w\|^{2}\\
 \begin{enumerate}
   \setcounter{enumi}{\value{saveenum}}
 \item Prove that the objective function $J_{\text{logistic}}(w)$ is convex.
-You may use any facts mentioned in the \href{https://davidrosenberg.github.io/mlcourse/Notes/convex-optimization.pdf}{convex optimization notes}.
+You may use any facts mentioned in the \href{https://davidrosenberg.github.io/mlcourse/Notes/convex-optimization.pdf}{convex optimization notes}
+\begin{itemize}
+    \color{blue}
+    \item first off we know that the sum of two convex functions are convex. 
+    \item so let us define $J(w)=f(w)+g(w)$ and prove that both $f(W)$ and $g(w)$ are convex separately
+    \item first lets look as $f(w)=\frac{1}{n}\Sigma_{i=1}^{n}log(1+e^{-y^iw^tx^i}))$
+    \begin{itemize}
+        \item working form inside out we know that $e^x$ is convex over $\mahtbb{R}$
+        \item we know that the function h(x)=1 is convex thus $1+e^{-y^iw^tx^i}$ is convex. 
+        \item then we know $1+e^{-y^iw^tx^i}\geq 1$ since clearly the the smallest value $e^{x}$ can take is 0 
+        \item further as we know log(x) is convex over $\mathbb{R}>0$ it must be the case that $log(1+e^{-y^iw^tx^i}))$ is convex
+        \item finally we know that scaling and summing convex functions makes them remain convex thus we have shown $f(w)=\frac{1}{n}\Sigma_{i=1}^{n}log(1+e^{-y^iw^tx^i}))$ is convex
+    \end{itemize}
+    \item next lets look at $g(w)=\lambda||w||^2$
+    \begin{itemize}
+        \item to show a function f is convex it must be the case that $\forall \theta\in [0,1] \forall x,y\in dom f$ we must have $f(\theta x +(1-\theta)y)\leq \theta(f(x))+(1-\theta)(f(y))$
+        \item so consider and arbitrary $\theta \in [0,1] ,x,y\in $dom(f). 
+        \item we can see that $g(\theta x + (1-\theat) y)=\lambda||\theta x+ (1-\theta)y||^2\leq \lambda (||\theta x||+ ||(1-\theta)y||^2 $ (by the triangle inequality) = $\lambda \theta ||x||^2+ \lambda (1-\theta)||y||^2=\theta g(x)+(1-\theta)g(y)$ proving that g(x) is indeed convex
+    \end{itemize}
+\end{itemize}
+.
 
 \item Complete the \texttt{f\_objective} function in the skeleton code,
 which computes the objective function for $J_{\text{logistic}}(w)$.
