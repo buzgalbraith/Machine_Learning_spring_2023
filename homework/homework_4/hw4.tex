@@ -142,6 +142,16 @@ Note that the set will not change if we multiply the weights by some constant $c
 Show that we can always increase the likelihood of the data by multiplying a scalar $c$ on $\hat{w}$,
 which means that MLE is not well-defined in this case.
 {(Hint: You can show this by taking the derivative of $L(c\hat{w})$ with respect to $c$, where $L$ is the likelihood function.)}
+\begin{itemize}
+
+    \color{blue}
+    \item recall that we can write our log likelihood of the logistic regression function for Bernoulli rv's as $\ell(w)=\Sigma_{n=1}^{n}y^{n}log(f(w^tx^n))+(1-y^n)log(1-f(w^tx^n))$
+    \item thus we can write  $\ell(cw)=\Sigma_{n=1}^{n}y^{n}log(f(cw^tx^n))+(1-y^n)log(1-f(cw^tx^n))$
+    \item and then taking the partial derivative of this with respect to c we get $\frac{\partial \ell}{\partial c}=\Sigma_{n=1}^{n}[\frac{y^n}{f(cw^tx^n)}+\frac{1-y^n}{f(cw^tx^n)}]\frac{\partial f(cw^tx^n)}{\partial c}=\Sigma_{n=1}^{n}[\frac{y^n}{f(cw^tx^n)}+\frac{1-y^n}{f(cw^tx^n)}](f(cw^tx^n)(1-f(cw^tx^n))w^tx^n=\Sigma_{n=1}^{n}(y^n-f(cw^tx^n))w^tx^n$
+    \item then notice here that $f(cw^tx^n)=\frac{1}{1+e^{-cw^tx^n}}$ is increasing in c 
+    \item thus $\ell(w,c$) is increasing in c 
+\end{itemize}
+
 
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
