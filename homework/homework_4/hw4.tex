@@ -91,33 +91,38 @@ minimizing the negative log-likelihood ($\nll_{\mathcal{D}}(w)$~in short) of the
   \item Show that the two approaches are equivalent, i.e. they will produce the same solution for $w$.
 \setcounter{saveenum}{\value{enumi}}
 \begin{itemize}
-    \color{blue}
-    \item first lets re-write the ERM problem 
-    \begin{itemize}
-    \item empirical risk for logistic loss can be written as $\hat{R}_{n}=\frac{1}{N}\Sigma_{n=1}^{N}\ell_{logistic}(w^tx^n,y^n)=\frac{1}{N}\Sigma_{n=1}^{N}log(e^{-y^nw^tx^n})$ as shown in homework two this can be expressed as $\hat{R}_{n}=\frac{1}{N}\Sigma_{n=1}^{N}\ell_{logistic}(w^tx^n,y^n)=\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(1+e^{-w^tx^n})+(1-y^n)log(1+e^{w^tx^n})$ 
-    \item thus our empirical risk minimize will be $\hat{w}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(1+e^{-w^tx^n})+(1-y^n)log(1+e^{w^tx^n})$
-    \item so we can define the function $g(w^tx)=(1+e^{w^tx})$ allowing us to further write $\hat{w}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(1+e^{-w^tx^n})+(1-y^n)log(1+e^{w^tx^n})=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(g(w^tx^n))+(1-y^n)log(g(-w^tx^n))$
-    \item however note that the arg min of a function is equivalent to the arg min of it's inverse so we can def fine $f(w^tx)=(g(w^tx))^{-1}=\frac{1}{1+e^{-w^tx}}$ meaning that$\hat{w}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(1+e^{-w^tx^n})+(1-y^n)log(1+e^{w^tx^n})=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(g(w^tx^n))+(1-y^n)log(g(-w^tx^n))=argmax_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(f(w^tx^n))+(1-y^n)log(f(-wx^n))$ 
-    \item recall that $f(x)=\frac{1}{1+e^{-w^tx}}$ so thus $log(f(-x))=log(\frac{1}{1+e^{w^tx}})=-log(g(x))$ or alternativly $log(g(-x))$
-    
-    $\hat{w}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(1+e^{-w^tx^n})+(1-y^n)log(1+e^{w^tx^n})=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(g(w^tx^n))+(1-y^n)log(g(-w^tx^n))=argmax_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(f(w^tx^n))+(1-y^n)log(-f(wx^n))=argmax_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(f(w^tx^n))+(1-y^n)log(1-f(wx^n))$
-
-
-    \item alterantivly we can explicity write $\hat{w}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(1+e^{-w^tx^n})+(1-y^n)log(1+e^{w^tx^n})=argmax_{w\in \mathbb{R}^{d}}\frac{1}{2N}\Sigma_{n=1}^{N}(1+y^n)log(\frac{1}{1+e^{-w^tx^n}}(1-y^n)log(\frac{1}{1+e^{w^tx^n}})$
-    \item then taking the partial with respect to one componetn of the weigth vector we get $\frac{1}{2m}\Sigma_{n=1}^{N}\frac{(1-y^{n})e^{w^tx^n}x}{1+e^{w^tx^n}}-\frac{(1+y^{n})e^{-w^tx^n}x}{1+e^{-w^tx^n}}=x[(1-y^n)((1-]$
-
-    
-    \end{itemize}
-    \item now let us re-write the MLE problem 
-    \begin{itemize}
-    \item re-write this in terms of the bernuli. 
-        \item under the mle assumptions for this problem we know that $P(y=1|x,w)=\frac{1}{1+e^{-w^tx}}$ and as this is a binary classification problem we know $P(y=-1|x,w)=1-P(y=1|x,w)$
-        \item thus under these mle assumptions we can write our log likelihood function as $\ell(w)=\Sigma_{n=1}^{N}log(P(y^n|x^n,w)=\frac{1}{2}\Sigma_{n=1}^{N}(1+y^n)log(P(y^n=1|x^n,w)+(1-y^n)log(P(y^n=-1|x^n,w))=\frac{1}{2}\Sigma_{n=1}^{N}(1+y^n)log(P(y^n=1|x^n,w)+(1-y^n)log(1-P(y^n=1|x^n,w))$
-        \item and if we define $f(x,w)=\frac{1}{1+e^{-w^tx}}$ we can write this as 
-         $\ell(w)=\Sigma_{n=1}^{N}log(P(y^n|x^n,w)=\frac{1}{2}\Sigma_{n=1}^{N}(1+y^n)log(P(y^n=1|x^n,w)+(1-y^n)log(P(y^n=-1|x^n,w))=\frac{1}{2}\Sigma_{n=1}^{N}(1+y^n)log(P(y^n=1|x^n,w)+(1-y^n)log(1-P(y^n=1|x^n,w))=\frac{1}{2}\Sigma_{n=1}^{N}(1+y^n)log(f(x,w))+(1-y^n)log(1-f(x))$
-    \end{itemize}
-    \item thus we have shown that these two questiosn can be expresse as the same optimzation problem and will thus yield equal ressults. 
+\color{blue}
+\item first re-write the erm approach  
+\begin{itemize}
+    \item so recall that in ERM the empirical risk of a function is given by 
+    \item $$\hat{R}_{n}=\frac{1}{n}\Sigma_{i=1}^{n}\ell(f(x^i),y^i)$$
+    \item so in the case of logistic loss we can see that our optimal weight vector will be given by  $$\hat{w}_{erm}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{n}\Sigma_{i=1}^{n}\ell_{log}(f(x^i),y^i)=argmin_{w\in \mathbb{R}^{d}}\frac{1}{n}\Sigma_{i=1}^{n}log(1+e^{-y^iw^tx^i})$$
+    \item as shown in homework 2 question 26 this expression can be re-written as  $\hat{w}_{erm}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{n}\Sigma_{i=1}^{n}\ell_{log}(f(x^i),y^i)=argmin_{w\in \mathbb{R}^{d}}\frac{1}{n}\Sigma_{i=1}^{n}log(1+e^{-y^iw^tx^i})=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(1+e^{-w^tx^i})+(1-y^i)log(1+e^{w^tx^i})$
+    \item further we know that maximising the inverse of a function is equiv lent to minimizing it.
+    that is     $\hat{w}_{erm}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(1+e^{-w^tx^i})+(1-y^i)log(1+e^{w^tx^i})\iff argmax_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(\frac{1}{log(1+e^{-w^tx^i})})+(1-y^i)\frac{1}{log(1+e^{w^tx^i})}) $
+    \item and further as the log is a monotonic transformation we can say 
+    $\hat{w}_{erm}=argmin_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(1+e^{-w^tx^i})+(1-y^i)log(1+e^{w^tx^i})\iff \iff argmax_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(\frac{1}{log(1+e^{-w^tx^i})})+(1-y^i)\frac{1}{log(1+e^{w^tx^i})})  \iff argmax_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}}) $
+    \item notice further that if we define the sigmoid function as $f(x)=\frac{1}{1+e^{-x}}$
+    we can express our problem as $\hat{w}_{erm}= argmax_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}}) = argmax_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)f(w^tx^i)+(1-y^i)f(-w^tx^i)$
+    \item further note the following equality $1-f(x)=1-\frac{1}{1+e^{-x}}=\frac{e^{-x}}{1+e^{-x}}=\frac{1}{1+e^x}=f(-x)$
+    \item so substituting this back into our erm function yields our final result for erm $$\hat{w}_{erm}=argmax_{w\in \mathbb{R}^{d}}\frac{1}{2n}\Sigma_{i=1}^{n}(1+y^i)log(f(x))+(1-y^i)log(1-f(x))$$
 \end{itemize}
+\item now we can re-writ the maximum likelihood approach. 
+\begin{itemize}
+    \item if we assume that our data is iid, and that each individual example is a Bernoulli random viable we can write the likelihood of our data set as $\mathcal{L}(D)=P(y^1,y^2...y^n|x^1...x^n,,w)=P(y^1|x^1,w)P(y^2|y^1,x^1,x^2,w)...=\Pi_{i=1}^{n}P(y^i|x^i, w)$ 
+    \item then our log likelihood of the data set is $\ell(d)=log(\mathcal{L}(D)=\Sigma_{i=1}^{n}P(y^i|x^i,w)$
+    \item in the binary classification case with $y\in\{-1,1\}$this becomes $\ell(d)=\frac{1}{2}\Sigma_{i=1}^{n}(1+y^i)P(y^i=1|x^i,w)+(1-y^i)P(y^i=-1|x^i,w)$
+    \item under the assumptions of logistic regression $P(y=1|x,w)=f(w^tx)$ where f as defined above is the sigmoid function thus we have $\ell(d)=\frac{1}{2}\Sigma_{i=1}^{n}(1+y^i)f(w^tx^n)+(1-y^i)(1-f(w^tx^n)$
+    \item so the weight vector this would yield would be    $\hat{w}_{mle}= argmax_{w\in \mathbb{R}^{d}}\frac{1}{2}\Sigma_{i=1}^{n}(1+y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}}) $
+\end{itemize}
+\item so it is clear that the $\hat{w}_{erm}$ and $\hat{w}_{mle}$ only differ by a constant factor of $\frac{1}{n}$ which will not effect the arg max and thus $\hat{w}_{erm}=\hat{w}_{mle}$
+\item now we can solve for $\hat{w}=\hat{w}_{erm}=\hat{w}_{mle}$
+\begin{itemize}
+    \item given $$\hat{w}= argmax_{w\in \mathbb{R}^{d}}\frac{1}{2}\Sigma_{i=1}^{n}(1+y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}}) $$
+    \item we can find the gradient with respect to w as $\nabla_{w}(\hat{w})=\frac{1}{2}\Sigma_{i=1}^{n}[\frac{y^i+1}{f(w^tx^i)}-\frac{1-y^i}{f(w^tx^i}]\frac{\partial f(w^tx^i)}{\partial w}=\frac{1}{2}\Sigma_{i=1}^{n}[\frac{y^i+1}{f(w^tx^i)}-\frac{1-y^i}{f(w^tx^i}](f(w^tx^i)(1-f(w^tx^i))(x^i)=\frac{1}{2}\Sigma_{i=1}^{n}[\frac{(y^n+1)(1-f(w^tx^n)- f(w^tx^n)(1-y^n)}{f(w^tx^n)(1-f(w^tx^n)}](f(w^tx^n)(1-f(w^tx^n))x^i=\frac{1}{2}\Sigma_{i=1}^{n}[y^n+1-2f(w^tx^n)]=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-f(w^tx^n)]$
+\end{itemize}
+
+ \end{itemize} 
 \end{enumerate}
 
 
@@ -133,9 +138,10 @@ In this problem, we will investigate the behavior of MLE for logistic regression
 Note that the set will not change if we multiply the weights by some constant $c$.
 \begin{itemize}
     \color{blue}
-    \item our descion bounary is the set of points such that we are equally likely to predict either class 
+    \item our decision boundary is the set of points such that we are equally likely to predict either class 
     \item this can thus be expressed in terms of the log odds between the two classes $log\frac{P(y=1|x,w)}{P(y=-1|x,w)}=log(\frac{P(y=1|x,\theta)}{1-P(y=1|x,\theta)})=log(\frac{\frac{1}{1+e^{-w^tx}}} {1-\frac{1}{1+e^{w^tx}}})=log(\frac{\frac{1}{1+e^{-w^tx}}} {\frac{e^{-w^tx}}{1+e^{w^tx}}})=log(\frac{1}{e^{-w^tx}})=log(1)-log(e^{-w^tx})=0-(-w^txlog(e))=w^tx$
-    \item so in other words we can write our desertion boundary is linear in w. 
+    \item and we know that our decision boundary is the space such that the odds between the two classes is 1, or in other words the log odds between the two classes are zero. we showed above that the $log\frac{P(y=1|x,w)}{P(y=-1|x,w)}=log(\frac{P(y=1|x,\theta)}{1-P(y=1|x,\theta)})=w^tx=x^tw$ setting this equal to zero we see that the decision boundary is given by $\{x:x^tw=0\}$ in other words it s a hyperplane that is perpendicular to our weight vector w.  
+    
 \end{itemize}
 
 \item Suppose the data is linearly separable and by gradient descent/ascent we have reached a decision boundary defined by $\hat{w}$ where all examples are classified correctly. 
@@ -145,11 +151,13 @@ which means that MLE is not well-defined in this case.
 \begin{itemize}
 
     \color{blue}
-    \item recall that we can write our log likelihood of the logistic regression function for Bernoulli rv's as $\ell(w)=\Sigma_{n=1}^{n}y^{n}log(f(w^tx^n))+(1-y^n)log(1-f(w^tx^n))$
-    \item thus we can write  $\ell(cw)=\Sigma_{n=1}^{n}y^{n}log(f(cw^tx^n))+(1-y^n)log(1-f(cw^tx^n))$
-    \item and then taking the partial derivative of this with respect to c we get $\frac{\partial \ell}{\partial c}=\Sigma_{n=1}^{n}[\frac{y^n}{f(cw^tx^n)}+\frac{1-y^n}{f(cw^tx^n)}]\frac{\partial f(cw^tx^n)}{\partial c}=\Sigma_{n=1}^{n}[\frac{y^n}{f(cw^tx^n)}+\frac{1-y^n}{f(cw^tx^n)}](f(cw^tx^n)(1-f(cw^tx^n))w^tx^n=\Sigma_{n=1}^{n}(y^n-f(cw^tx^n))w^tx^n$
-    \item then notice here that $f(cw^tx^n)=\frac{1}{1+e^{-cw^tx^n}}$ is increasing in c 
-    \item thus $\ell(w,c$) is increasing in c 
+    \item first note that the likelihood of our data in this case is given by $\ell(D,w)=\frac{1}{2}\Sigma_{i=1}^{n}( (1+y^i)log(P(y^i=1|x_i=1,w)) +((1-y^i)log(P(y^i=-1|x_i=1,w)))=\frac{1}{2}\Sigma_{i=1}^{n}((1+y^i)log(f(w^tx^i))+(1-y^i)log(1-f(w^tx^i))$
+    \item so we can write the likelihood of our data set and weight vector times some constant c as $\ell(D,cw)=\frac{1}{2}\Sigma_{i=1}^{n}((1+y^i)log(f(cw^tx^i))+(1-y^i)log(1-f(cw^tx^i))$
+    \item taking the derivative with respect to c we see that $\frac{\partial \ell}{\partial c}=\frac{1}{2}\Sigma_{i=1}^{n}[\frac{y^i+1}{f(cw^tx^i)} +\frac{1-y^i}{1-f(cw^tx^i)}]f(cw^tx^i)(1-f(xw^tx^i))(w^tx^i)=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-f(cw^tx^i)]w^tx^i=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-\frac{1}{1+e^{-cw^tx^n}}]w^tx^i$
+    \item first off as we know the data is lineally separable if $w$ is a separating hyperplane $w^tx>0$ will always holds 
+    \item using the above fact we know that $e^{-cw^tx^n}$ will always be negative 
+    \item this tells us that  $\frac{\partial \ell}{\partial c}=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-\frac{1}{1+e^{-cw^tx^n}}]w^tx^i$ will always be increasing in c. 
+    \item so we can keep geometrically the same hyperplane but arbitrarily increase our likelihood of seeing the data by increasing the constant on it $c$ which multiples our weight vector w.  
 \end{itemize}
 
 
@@ -205,6 +213,16 @@ and use the numpy function
 }
 to get accurate calculations
 and to prevent overflow.
+
+\begin{itemize}
+    \color{blue}
+    \item first off as recommended in the question i am going to re-write the expression for numerical stability
+    \item so note that our objective can be thought of as $J(w)=L(w)+r(w)$ where l is a loss term and r is a regularization term 
+   \item so in the two class logistic regression set up we assume that $P(y=1|x,w)=\frac{1}{1+e^{-\eta}}=\frac{1}{1+e^{-yw^tx}}$
+   \item we can can show this is equivalent to a soft max with two classes
+    \item the soft max function we can write $P(y=1|x,w)=\frac{P(y=1|x,w)}{\Sigma_{i\in k}P(y=i|x,w)}=\frac{P(y=1|x,w)}{P(y=0|x,w)+P(y=1|x,w)}=\frac{\frac{1}{1+e^{-\eta}}}{1-\frac{1}{e^{-\eta}}+\frac{1}{e^{-\eta}}}=\frac{\frac{1}{1+e^{-\eta}}}{1}=\frac{1}{1+e^{-\eta}}$ meaning the two approaches are equiv lent 
+    \item so new recall that our original log likelihood function was $\ell(w)=\Sigma_{i=1}^{n}y^ilog(P(y^i=1|x,w))(1-y_i)log(P(y^i=0|x,w))$ which as we showed above is equivalent to $\Sigma_{i=1}^{n}y^ilog(\frac {P(y^i=1|x^i,w)}{\Sigma_{k=1}^{2}P(y^i=k|x^i,w})(1-y_i)log(\frac{P(y^i=0|x,w)}{\Sigma_{k=1}^{2}P(y^i=k|x^i,w)})$
+\end{itemize}
 
 \item Complete the \texttt{fit\_logistic\_regression\_function} in the skeleton
 code using the \texttt{minimize} function from \texttt{scipy.optimize}.
