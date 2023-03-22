@@ -26,7 +26,7 @@ def f_objective(theta, X, y, l2_param=1):
         objective: scalar value of objective function
     '''
     ## break this in to two parts regulization and loss term 
-    regularization_term=l2_param*np.linalg.norm(theta) ## l_2 regulairzation term          
+    regularization_term=l2_param*np.dot(theta, theta) ## l_2 regulairzation term          
     loss_term_one = np.logaddexp(0, -y* (X@theta))
     loss_term_zero = np.logaddexp(0, (1-y)* (X@theta))
     return regularization_term+np.mean(loss_term_zero+loss_term_one)
