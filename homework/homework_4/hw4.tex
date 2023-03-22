@@ -216,12 +216,10 @@ and to prevent overflow.
 
 \begin{itemize}
     \color{blue}
-    \item first off as recommended in the question i am going to re-write the expression for numerical stability
-    \item so note that our objective can be thought of as $J(w)=L(w)+r(w)$ where l is a loss term and r is a regularization term 
-   \item so in the two class logistic regression set up we assume that $P(y=1|x,w)=\frac{1}{1+e^{-\eta}}=\frac{1}{1+e^{-yw^tx}}$
-   \item we can can show this is equivalent to a soft max with two classes
-    \item the soft max function we can write $P(y=1|x,w)=\frac{P(y=1|x,w)}{\Sigma_{i\in k}P(y=i|x,w)}=\frac{P(y=1|x,w)}{P(y=0|x,w)+P(y=1|x,w)}=\frac{\frac{1}{1+e^{-\eta}}}{1-\frac{1}{e^{-\eta}}+\frac{1}{e^{-\eta}}}=\frac{\frac{1}{1+e^{-\eta}}}{1}=\frac{1}{1+e^{-\eta}}$ meaning the two approaches are equiv lent 
-    \item so new recall that our original log likelihood function was $\ell(w)=\Sigma_{i=1}^{n}y^ilog(P(y^i=1|x,w))(1-y_i)log(P(y^i=0|x,w))$ which as we showed above is equivalent to $\Sigma_{i=1}^{n}y^ilog(\frac {P(y^i=1|x^i,w)}{\Sigma_{k=1}^{2}P(y^i=k|x^i,w})(1-y_i)log(\frac{P(y^i=0|x,w)}{\Sigma_{k=1}^{2}P(y^i=k|x^i,w)})$
+    \item first note that in the case of our data $y\in \{0,1\}$
+    \item recall from part 1, that this approach (ie using ERM) will yield the same sollution as MLE 
+    \item thus we can work with the MLE objective of the from $j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2$
+    \item we can further simplify this objective$j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)[log({1})-log({1+e^{-w^tx^i}})]+(1-y^i)[log(1)-log({1+e^{w^tx^i}}))+\lambda ||w||^2=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({1+e^{-w^tx^i}})]-(1-y^i)[log({1+e^{w^tx^i}})])=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({e^{0}+e^{-w^tx^i}})]-(1-y^i)[log({e^{0}+e^{w^tx^i}})])=\frac{-1}{n}\Sigma_{i=1}^{n}\lambda||w||^2-log(e^0+e^{-y^nw^tx^n})-log(e^0+e^{y^nw^tx^n})$
 \end{itemize}
 
 \item Complete the \texttt{fit\_logistic\_regression\_function} in the skeleton
@@ -265,13 +263,34 @@ and $p(x=T\mid z=T) = 1$.
 \begin{enumerate}
   \setcounter{enumi}{\value{saveenum}}
 \item Show that $p(x=H\mid \theta_1, \theta_2) = \theta_1 \theta_2$.
-
+\begin{itemize}
+    \color{blue}
+    \item and assume that all $x_i$ are conditionally independent given z 
+    \item we know that $z\in \{H,T\}$ so by the law of total probability $P(x=H|\theta_1,\theta_2)=P(x=H,z=H|\theta_1, \theta_2)+P(x=H,z=T|\theta_1, \theta_2)=P(z=H|\theta_1, \theta_2)P(X=h|z=H, \theta_1, \theta_2)+P(z=T|\theta_1, \theta_2)P(x=H|z=t,\theta_1, \theta_2)$
+    \item we know that $P(x=T|Z=t)=1\Rightarrow P(X=H|z=T)=0$
+    \item further we know z does not depends on $\theta_2$ so $P(z=h|\theta_1,\theta_2)=P(z=h|\theta_1)$
+    \item and finally we know that $P(x=1|\theta_1, \theta_2, Z=H)=P(x=1|\theta_2, z=h)=\theta_2$ since the value of z is already set
+    \item so thus we can see $ P(x=H|\theta_1,\theta_2)=\theta_1\theta_2$
+\end{itemize}
 
 \item Given a set of reported results $\mathcal{D}_r$ of size $N_r$, where the number of heads is $n_h$ and the number of tails is $n_t$, what is the likelihood of $\mathcal{D}_r$ as a function of $\theta_1$ and $\theta_2$.
+\begin{itemize}
+    \color{blue}
+    \item here i am again assuming that $x_i$ is conditionally independent of $z_i$
+    \item it is clear that $N_{r}=n_{h}+n_{t}$
+    \item we can think of each reported coin flip $z_i$ as a Bernoulli with parameters ($\theta_1, \theta_2)$
+    \item we know that the sum of conditionally independent Bernoulli is binomial 
+    \item so we can say $\mathcal{L}(\theta_1, \theta_2, n_h)=\Pi_{i=1}^{n}P(x_i|\theta_1, \theta_2)=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(P(x_i=h|\theta_1,\theta_2))^{n_h}(P(x_i=T|\theta_1,\theta_2))^{N_r-n_h}=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(\theta_{1}\theta_{2})^{n_h}(P(x_i=T, z_i=H|\theta_1,\theta_2)+P(x_i=T, z_i=T|\theta_1,\theta_2))^{N_r-n_h}=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(\theta_{1}\theta_{2})^{n_h}(P(z_i=H|\theat_1 ,\theta_2)P(x_i=T| z_i=H\theta_1,\theta_2)+P(z_i=T|\theta_1,\theta_2)P(x_i=T| z_i=T\theta_1,\theta_2))^{N_r-n_h}=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(\theta_{1}\theta_{2})^{n_h}[(1-\theta_1)+\theta_1(1-\theta_2)]^{N_{r}-n_h}= (\theta_{1}\theat_{2})^{n_h}(1-\theta_2)^{N_{R}-n_{h}}$
+\end{itemize}
 
 
 \item Can we estimate $\theta_1$ and $\theta_2$ using MLE? Explain your judgment.
-
+\begin{itemize}
+    \color{blue}
+    \item i don't think we can estimate $\theta_1 , \theta_2$ it using mle
+    \item we are only able to observe a binary outcome representing what we are told is the outcome but not the true outcome 
+    \item so it is not possible for us to distinguish from our data set, what source of uncertainty comes from the coin flip $\theta_1$ or from if we will be told $\theta_2$
+\end{itemize}
 
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
