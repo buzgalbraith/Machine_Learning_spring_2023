@@ -9,6 +9,10 @@ def f_objective(theta, X, y, l2_param=1):
     Returns:
         objective: scalar value of objective function
     '''
+
+
+
+    
     
 def fit_logistic_reg(X, y, objective_function, l2_param=1):
     '''
