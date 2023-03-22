@@ -154,8 +154,7 @@ which means that MLE is not well-defined in this case.
     \item first note that the likelihood of our data in this case is given by $\ell(D,w)=\frac{1}{2}\Sigma_{i=1}^{n}( (1+y^i)log(P(y^i=1|x_i=1,w)) +((1-y^i)log(P(y^i=-1|x_i=1,w)))=\frac{1}{2}\Sigma_{i=1}^{n}((1+y^i)log(f(w^tx^i))+(1-y^i)log(1-f(w^tx^i))$
     \item so we can write the likelihood of our data set and weight vector times some constant c as $\ell(D,cw)=\frac{1}{2}\Sigma_{i=1}^{n}((1+y^i)log(f(cw^tx^i))+(1-y^i)log(1-f(cw^tx^i))$
     \item taking the derivative with respect to c we see that $\frac{\partial \ell}{\partial c}=\frac{1}{2}\Sigma_{i=1}^{n}[\frac{y^i+1}{f(cw^tx^i)} +\frac{1-y^i}{1-f(cw^tx^i)}]f(cw^tx^i)(1-f(xw^tx^i))(w^tx^i)=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-f(cw^tx^i)]w^tx^i=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-\frac{1}{1+e^{-cw^tx^n}}]w^tx^i$
-    \item first off as we know the data is lineally separable if $w$ is a separating hyperplane $w^tx>0$ will always holds 
-    \item using the above fact we know that $e^{-cw^tx^n}$ will always be negative 
+    \item first off as we know the data is lineally separable if $w$ is a separating hyperplane $w^tx>0$ will always holds when $y^{i}=1$ and $w^{t}x<0$ will always hold when $y=-1$ 
     \item this tells us that  $\frac{\partial \ell}{\partial c}=\Sigma_{i=1}^{n}[\frac{y^n+1}{2}-\frac{1}{1+e^{-cw^tx^n}}]w^tx^i$ will always be increasing in c. 
     \item so we can keep geometrically the same hyperplane but arbitrarily increase our likelihood of seeing the data by increasing the constant on it $c$ which multiples our weight vector w.  
 \end{itemize}
@@ -280,7 +279,7 @@ and $p(x=T\mid z=T) = 1$.
     \item it is clear that $N_{r}=n_{h}+n_{t}$
     \item we can think of each reported coin flip $z_i$ as a Bernoulli with parameters ($\theta_1, \theta_2)$
     \item we know that the sum of conditionally independent Bernoulli is binomial 
-    \item so we can say $\mathcal{L}(\theta_1, \theta_2, n_h)=\Pi_{i=1}^{n}P(x_i|\theta_1, \theta_2)=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(P(x_i=h|\theta_1,\theta_2))^{n_h}(P(x_i=T|\theta_1,\theta_2))^{N_r-n_h}=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(\theta_{1}\theta_{2})^{n_h}(P(x_i=T, z_i=H|\theta_1,\theta_2)+P(x_i=T, z_i=T|\theta_1,\theta_2))^{N_r-n_h}=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(\theta_{1}\theta_{2})^{n_h}(P(z_i=H|\theat_1 ,\theta_2)P(x_i=T| z_i=H\theta_1,\theta_2)+P(z_i=T|\theta_1,\theta_2)P(x_i=T| z_i=T\theta_1,\theta_2))^{N_r-n_h}=\begin{pmatrix}N_{R}\\h_{h}\end{pmatrix}(\theta_{1}\theta_{2})^{n_h}[(1-\theta_1)+\theta_1(1-\theta_2)]^{N_{r}-n_h}= (\theta_{1}\theat_{2})^{n_h}(1-\theta_2)^{N_{R}-n_{h}}$
+    \item so we can say $\mathcal{L}(\theta_1, \theta_2, n_h)=\Pi_{i=1}^{n}P(x_i|\theta_1, \theta_2)= (P(x_i=h|\theta_1,\theta_2))^{n_h}(P(x_i=T|\theta_1,\theta_2))^{N_r-n_h}= (\theta_{1}\theta_{2})^{n_h}(P(x_i=T, z_i=H|\theta_1,\theta_2)+P(x_i=T, z_i=T|\theta_1,\theta_2))^{N_r-n_h}= (\theta_{1}\theta_{2})^{n_h}(P(z_i=H|\theat_1 ,\theta_2)P(x_i=T| z_i=H\theta_1,\theta_2)+P(z_i=T|\theta_1,\theta_2)P(x_i=T| z_i=T\theta_1,\theta_2))^{N_r-n_h}= (\theta_{1}\theta_{2})^{n_h}[(1-\theta_1)+\theta_1(1-\theta_2)]^{N_{r}-n_h}= (\theta_{1}\theta_{2})^{n_h}(1-\theta_1\theta_2)^{N_{R}-n_{h}}$
 \end{itemize}
 
 
@@ -290,6 +289,7 @@ and $p(x=T\mid z=T) = 1$.
     \item i don't think we can estimate $\theta_1 , \theta_2$ it using mle
     \item we are only able to observe a binary outcome representing what we are told is the outcome but not the true outcome 
     \item so it is not possible for us to distinguish from our data set, what source of uncertainty comes from the coin flip $\theta_1$ or from if we will be told $\theta_2$
+    \item i think we could maximise the likelihood of $\theta_1\theta_2$
 \end{itemize}
 
 \setcounter{saveenum}{\value{enumi}}
