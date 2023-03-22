@@ -219,6 +219,7 @@ and to prevent overflow.
     \item recall from part 1, that this approach (ie using ERM) will yield the same sollution as MLE 
     \item thus we can work with the MLE objective of the from $j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2$
     \item we can further simplify this objective$j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)[log({1})-log({1+e^{-w^tx^i}})]+(1-y^i)[log(1)-log({1+e^{w^tx^i}}))+\lambda ||w||^2=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({1+e^{-w^tx^i}})]-(1-y^i)[log({1+e^{w^tx^i}})])=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({e^{0}+e^{-w^tx^i}})]-(1-y^i)[log({e^{0}+e^{w^tx^i}})])$
+      \item \inputminted[firstline=17, lastline=32, breaklines=True]{python}{hw_4_code.py}
 \end{itemize}
 
 \item Complete the \texttt{fit\_logistic\_regression\_function} in the skeleton
@@ -227,11 +228,23 @@ Use this function to train
 a model on the provided data. Make sure to take the appropriate preprocessing
 steps, such as standardizing the data and adding a column for the
 bias term. 
+\begin{itemize}
+    \
+\item \inputminted[firstline=34, lastline=91, breaklines=True]{python}{hw_4_code.py}
 
+\end{itemize}
 \item Find the $\ell_{2}$ regularization parameter that maximizes the log-likelihood
 on the validation set. Plot the log-likelihood for different values
 of the regularization parameter. 
+\begin{itemize}
+    \item 
 
+\item \inputminted[firstline=132, lastline=171, breaklines=True]{python}{hw_4_code.py}
+\item \includegraphics[width=10cm]{homework/homework_4/immages/q7_1.png}
+\item \includegraphics[width=10cm]{homework/homework_4/immages/q7_2.png}
+\item \includegraphics[width=10cm]{homework/homework_4/immages/q7_3.png}
+\item i found optimal $\lambda =0.02857151428571429$
+\end{itemize}
 \item {[}Optional{]} 
 It seems reasonable to interpret the prediction $f(x)=\phi(w^{T}x)=1/(1+e^{-w^{T}x})$
 as the probability that $y=1$, for a randomly drawn pair $\left(x,y\right)$.
@@ -247,7 +260,15 @@ set into groups based on the predicted probability (you can play with
 the size of the groups to get a result you think is informative).
 For each group, examine the percentage of positive labels. You can
 make a table or graph. Summarize the results. You may get some ideas
-and references from \href{http://scikit-learn.org/stable/modules/calibration.html}{scikit-learn's discussion}. 
+and references from \href{http://scikit-learn.org/stable/modules/calibration.html}{scikit-learn's discussion}.
+\begin{itemize}
+  \item \inputminted[firstline=174, lastline=191, breaklines=True]{python}{hw_4_code.py}
+\item \includegraphics[width=10cm]{homework/homework_4/immages/question_8_1.JPG}
+\item \includegraphics[width=10cm]{homework/homework_4/immages/q_8_2output.png}
+\end{itemize}
+
+
+
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 \section{Coin Flipping with Partial Observability}
