@@ -218,7 +218,7 @@ and to prevent overflow.
     \item first note that in the case of our data $y\in \{0,1\}$
     \item recall from part 1, that this approach (ie using ERM) will yield the same sollution as MLE 
     \item thus we can work with the MLE objective of the from $j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2$
-    \item we can further simplify this objective$j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)[log({1})-log({1+e^{-w^tx^i}})]+(1-y^i)[log(1)-log({1+e^{w^tx^i}}))+\lambda ||w||^2=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({1+e^{-w^tx^i}})]-(1-y^i)[log({1+e^{w^tx^i}})])=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({e^{0}+e^{-w^tx^i}})]-(1-y^i)[log({e^{0}+e^{w^tx^i}})])=\frac{-1}{n}\Sigma_{i=1}^{n}\lambda||w||^2-log(e^0+e^{-y^nw^tx^n})-log(e^0+e^{y^nw^tx^n})$
+    \item we can further simplify this objective$j(w)=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)log(\frac{1}{1+e^{-w^tx^i}})+(1-y^i)log(\frac{1}{1+e^{w^tx^i}})+\lambda ||w||^2=\frac{-1}{m}\Sigma_{i=1}^{n}(y^i)[log({1})-log({1+e^{-w^tx^i}})]+(1-y^i)[log(1)-log({1+e^{w^tx^i}}))+\lambda ||w||^2=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({1+e^{-w^tx^i}})]-(1-y^i)[log({1+e^{w^tx^i}})])=\Sigma_{i=1}^{n}\lambda ||w||^2-(y^i)[log({e^{0}+e^{-w^tx^i}})]-(1-y^i)[log({e^{0}+e^{w^tx^i}})])$
 \end{itemize}
 
 \item Complete the \texttt{fit\_logistic\_regression\_function} in the skeleton
