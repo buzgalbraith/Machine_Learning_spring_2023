@@ -211,6 +211,38 @@ D|\theta)P(\theta)}{P(\mathcal{D})}$ where we think of both sides as a function 
 \item there are many choices depending on what loss we want to minimize
 \section*{gaussian regression example}
 \subsection*{example in 1 dimension}
-\item pick up at 47 minutes 
+\item input space $X=[-1,1]$ output space $y\in \mathbb{R}$
+\item y is generated as $y=w_0+w_1x+\epsilon$ where $\epsilon\in \mathcal{N}(0,.2^2)\iff y|x,w_0,w_1\sim\mathcal{N}(w_0+w_1x,.2^2)$
+\item lets assume our prior is $w=(w_0,w_1)\sim\mathcal{N}(0,\frac{1}{2}*I)$ where I is the identity matrix
+\item the parameter space is $W=\mathbb{R}^{2}$
+\subsection*{example in 1d prior distribution}
+\item we know that our covariance matrix is $\frac{1}{2}I=\begin{pmatrix}
+    .5&0\\0&.5
+\end{pmatrix}$ so our contour lines are perfect circles radiating out from the mean zero\\
+\includegraphics*{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_7/immages/l7_4.JPG}
+\item so if we were to sample $w$ according to our prior we could basically get any line
+\item so without any data $E[y|x,w]=w_0+w_1x\text{ for a w sampled from } w\sim\mathcal{N}(0,\frac{1}{2}I)$
+\item so the expectation of some random realizations of our prior could look like this 
+\item \includegraphics*{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_7/immages/l7_5.JPG}
+\subsection*{example in 1d 1 observation}
+\item if we are then given one observation \item \includegraphics*{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_7/immages/l7_6.JPG}
+\item lets say it is the blue point on the right graph 
+\item the left is our posterior $P(\theta|\mathcal{D})=P(\mathcal{D}|\theta)P(\theta)$ so our prior shifts a lot to acuminated the new point 
+\item the lines on the right graph are now $y(x)=E[y|x,w]=w_0+w_1x$ but our w is sampled from our posterior $w\sim P(w|\mathcal{D})$
+\item as we get more data our beliefs collapse into a smaller distribution
+\item \item \includegraphics*{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_7/immages/l7_9.JPG}
+\subsection*{closed from of the posterior}
+\item this is a $X\in \mathbb{R}^{d}$ general gaussian linear regression problem
+\item the gaussian has a conjugate prior so its posterior is also gaussian which is nice
+\item we model $w\sim \mathcal{N}(0,\Sigma_0)$ and $y_i|x,w$ iid $\mathcal{N}(w^tx_i,\sigma^2)$
+\item we have a design matrix X and response vector y 
+\item the posterior distribution is a guassian distributions with $W|\mathcal{D}\sim \mathcal{N}(\mu_p.\Sigma_p)$
+\item where $\mu_p=(X^TX+\sigma^2\Sigma_{0}^{-1})^{-1}X^ty$
+\item and $\Sigma_o=(\sigma^-2X^tX+\Sigma^{-1}_0)^{-1}$
+\item there parameters tell us where our parameter is centered and how much uncertainty we have about the parameter space
+\item they skipped how to derive this in class and i am not sure it is super important beyond algebra
+\item if we want a map point estimate of w then $\hat{w}=\mu_p$
+\item further we can note that the map estimate with a prior of $\Sigma_0=\frac{\sigma^2}{\lambda }I$ yields $\hat{w}=\mu_p=(X^TX+\lambda I)^{-1}X^Ty$ which is the closed from solution to ridge regression so ridge can be though of as a point estimate gaussian regression with a certain value of $\Sigma_0$
+\item but the gaussian also lets you understand the overall distribution of your parameters while ridge regression only gives you a single estimate
 \end{itemize}
 \end{document}
