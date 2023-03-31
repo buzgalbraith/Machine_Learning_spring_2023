@@ -79,9 +79,22 @@ of the negative log-likelihood function $\nll_{\mathcal{D}}(w)$ and the prior de
 (up to a proportionality constant is fine).
 \begin{itemize}
   \color{blue}
+  \item recall that the posterior distribution of our parameter w given out data set $\mathcal{D}$ is given by $$P(w|\mathcal{D})\propto P(\mathcal{D}|w)P(w)$$
+  \item so now we want to think about $P(\mathcal{D}|w)=\mathcal{L}_{\mathcal{D}}(w)=P(y_1...y_n|w,x_1..x_n)$
+  \item then under the assumptions of logistic regression we can write this as $P(\mathcal{D}|w)=\mathcal{L}_{\mathcal{D}}(w)=P(y_1...y_n|w,x_1..x_n)=\Pi_{i=1}^{n}P(y^{i}|w,x_{i})$
+  \item then we can take the log of this to get $\ell(w)=log(\mathcal{L}_{\mathcal{D}}(w))=\frac{1}{2}\Sigma_{i=1}^{n}(y^{i}+1)P(w=1|x^{i},w)+(y^{i}-1)P(w=-1|x^{i},w)=\frac{1}{2}\Sigma_{i=1}^{n}(y^{i}+1)log(\frac{1}{1+e^{-w^tx^i}})+(y^{i}-1)log(1-\frac{1}{1+e^{-w^tx^i}})$
+  \item so turning back to the question we can write $$P(w|\mathcal{D})\propto P(\mathcal{D}|w)P(w)\propto e^{\frac{-1}{2}\Sigma_{i=1}^{n}(y^{i}+1)log(\frac{1}{1+e^{-w^tx^i}})+(y^{i}-1)log(1-\frac{1}{1+e^{-w^tx^i}})}p(w)$$ which is the posterior expressed in terms of of the negative log likelihood function and posterior distribution 
+  \item alternativly we could write it in more general terms as $$P(w|\mathcal{D})\propto P(\mathcal{D}|w)P(w)=\mathcal{L}_{\mathcal{D}}(w)P(w)\propto e^{-log(\mathcal{L}_{\mathcal{D}}(w))}P(w) $$
 \end{itemize} 
 
 \item Suppose we take a prior on $w$ of the form $w\sim\mathcal{N}(0,\Sigma)$, that is in the Gaussian family. Is this a conjugate prior to the likelihood given by logistic regression?
+\begin{itemize}
+    \color{blue}
+    \item a conjugate pair means that both the posterior and prior are from the same distribution family
+    \item we know our prior is Gaussian such that $w\sim\mathcal{N}(0,\Sigma)$, we know the pdf of a Gaussian random vector is given by $f_{W}(x)=(2\pi)^{\frac{-k}{2}}det(\Sigma)^{\frac{-1}{2}}e^{-\frac{1}{2}(x-\mu)^{t}\Sigma^{-1}(x-\mu)}$ and given the information we have about our prior this becomes $f_{W}(x)=(2\pi)^{\frac{-k}{2}}det(\Sigma)^{\frac{-1}{2}}e^{-\frac{1}{2}(x-\mu)^{t}\Sigma^{-1}(x-\mu)}=(2\pi)^{\frac{-k}{2}}det(\Sigma)^{\frac{-1}{2}}e^{-\frac{1}{2}x^{t}\Sigma^{-1}x}$
+    \item in this case we are only interested in out posterior up to a point of proportionality so we an ignore terms that do not relay on w so we can write our posterior distribution as $P(w|\mathcal{D})\propto P(\mathcal{D}|w)P(w)P(w|\mathcal{D})\propto e^{-log(\mathcal{L}_{\mathcal{D}}(w))}P(w)\propto  e^{-log(\mathcal{L}_{\mathcal{D}}(w))}e^{-\frac{1}{2}w^{t}\Sigma^{-1}w}\\ =e^{-(log(\mathcal{D}|w)+\frac{1}{2}w^t\Sigma^{-1} w)} $
+    \item so our pdf would be given by a logistic times the Gaussian pdf, and thus i don't think it would be Gaussian. so in other words no i don't believe it is a conjugate prior 
+\end{itemize}
 
 
 \item Show that there exist a covariance matrix $\Sigma$ such that MAP (maximum a posteriori) estimate for $w$
@@ -91,6 +104,19 @@ of $w$. Also, remember you can drop any terms from the objective
 function that don't depend on $w$. You may freely use results
 of previous problems.{]} 
 
+\begin{itemize}
+   \color{blue}
+    \item as we showed in the last question our posterior can be written as  $P(w|\mathcal{D})\propto e^{-(log(\mathcal{D}|w)+\frac{1}{2}w^t\Sigma^{-1} w)} $
+    \item note that the map estimate $\hat{w}\in argmax_{w} P(w|d)$ will not be effected by monotonic transformations
+    \item thus we can write the negative log posterior as  $ log(P(w|\mathcal{D}))\propto (log(\mathcal{D}|w)+\frac{1}{2}w^t\Sigma w) $ and still achieve the same map estimator. 
+    \item so thus our map estimator will be $\hat{w}=\argmax_{w}P(w|\mathcal{D})\propto argmax_{w}(log(\mathcal{L}_{\mathcal{D}}(w))+\frac{1}{2}w^t\Sigma^{-1} w) $ 
+    \item we saw in the last homework $\hat{w}=argmax_{w}\in log(\mathcal{L}_{\mathcal{D}}(w))=argmax_{w}\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}$
+    \item so the optimal w for our regularized logistic expression can be written as  $\hat{w}=argmax_{w}\in log(\mathcal{L}_{\mathcal{D}}(w))=argmax_{w}\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))+\lambda ||w||=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\lambda w$
+    \item so turning back to the map of the negative log of our posterior distribution we can write the problem as $\hat{w}=\argmax_{w}P(w|\mathcal{D})\propto argmax_{w}(log(\mathcal{L}_{\mathcal{D}}(w))+\frac{1}{2}w^t\Sigma^{-1} w)=\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))+\frac{1}{2}w^t\Sigma^{-1} w$
+    \item the gradient of our posterior can be written as $\nabla_{P(w|\mathcal{D})}(w)=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\Sigma^{-1}w$
+    \item so it is clear if we set $\Sigma=I{\lambda}\Rightarrow \Sigma^{-1}w=\lambad w$ and thus we will achive the same argmax $\hat{w}$ in both cases
+\end{itemize}
+
 
 \item In the Bayesian approach, the prior should reflect your beliefs about
 the parameters before seeing the data and, in particular, should be
@@ -99,6 +125,12 @@ of size $n$, how should you choose $\lambda$ in our regularized
 logistic regression objective function so that the ERM is equal
 to the mode of the posterior distribution of $w$ (i.e. is equal to
 the MAP estimator). 
+\begin{itemize}
+    \color{blue}
+    \item we know from last question the mode of posterior that is the map estimator is given by $\hat{w}=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\Sigma^{-1}w=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+Iw=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+w$
+    \item we know from the last home work that our regularized erm can be expressed as  $\hat{w}=argmax_{w}\in log(\mathcal{L}_{\mathcal{D}}(w))=argmax_{w}\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))+\lambda ||w||=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\lambda w$ 
+    \item so these two expressions are equalized when $\lambda=1$
+\end{itemize}
 
 
 
