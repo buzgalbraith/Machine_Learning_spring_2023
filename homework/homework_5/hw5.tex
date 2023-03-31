@@ -142,7 +142,7 @@ the MAP estimator).
 Consider flipping a biased coin where $p(z=H\mid \theta_1) = \theta_1$.
 However, we cannot directly observe the result $z$.
 Instead, someone reports the result to us,
-which we denotey by $x$.
+which we denote by $x$.
 Further, there is a chance that the result is reported incorrectly \emph{if it's a head}.
 Specifically, we have $p(x=H\mid z=H, \theta_2) = \theta_2$
 and $p(x=T\mid z=T) = 1$.
@@ -151,10 +151,94 @@ and $p(x=T\mid z=T) = 1$.
 \item We additionally obtained a set of clean results $\mathcal{D}_c$ of size $N_c$, where $x$ is directly observed without the reporter in the middle. Given that there are $c_h$ heads and $c_t$ tails,
 estimate $\theta_1$ and $\theta_2$ by MLE taking the two data sets into account.
 Note that the likelihood is $L(\theta_1, \theta_2) = p(\mathcal{D}_r, \mathcal{D}_c\mid \theta_1, \theta_2)$.
+\begin{itemize}
+    \color{blue}
+    \item first things first we need to derive our likelihood expression for $\mathcal{D}_{e}$
+    \begin{itemize}
+        \item we are told that our observations in $\mathcal{D}_{e}$ are the result with out any intermediary, thus we can say that $\forall x_i\in \mathcal{D}_{e}=P(x_i=H|x=H, \theta_1, \theta_2)=1=P(x_i=H|x=H, \theta_1, \theta_2)$ 
+        \item with this in mind we can write $\mathcal{L}_{\mathcal{D}_{e}}(\theta_1,\theta_2)=\Pi_{i=1}^{n}P(x_i|\theta_1,\theta_2)=P(x_i=h|\theta_1,\theta_2)^{c_h}P(x_i=t|\theta_1,\theta_2)^{c_t}=(P(x_i=h|z_i=h\theta_1,\theta_2)P(z_i=h|\theta_1,\theta_2)+P(x_i=h|z_i=T,\theta_1,\theta_2)P(z_i=T|\theta_1,\theta_2)^{c_h}( P(x_i=t|,z_i=h,\theta_1,\theta_2)P(z_i=h|\theta_1,\theta_2)+P(x_i=t|,z_i=t,\theta_1,\theta_2)P(z_i=t|\theta_1,\theta_2)  )^{c_t}=P(z_i=H|\theta_1,\theta_2)^{c_h}P(z_i=T|\theta_1,\theta_2)^{c_t}=P(z_i=H|\theta_1)^{c_h}P(z_i=T|\theta_1)^{c_t}=\theta_1^{c_h}(1-\theta_1)^{c_t}$
+    \end{itemize}
+    \item now we can derive our joint likelihood of both data sets that is $\mathcal{L}_{\mathcal{D}_{e},\mathcal{D}_{c}}(\theta_1,\theta_2)$
+    \begin{itemize}
+        \item given both data sets are sampled iid we can say $\mathcal{L}_{\mathcal{D}_{e},\mathcal{D}_{c}}(\theta_1,\theta_2)=\mathcal{L}_{\mathcal{D}_{e}}(\theta_1,\theta_2)*\mathcal{L}_{\mathcal{D}_{c}}(\theta_1,\theta_2)$
+        \item then using what we computed above as well as question 10 from homework 4 we can write $\mathcal{L}_{\mathcal{D}_{e},\mathcal{D}_{c}}(\theta_1,\theta_2)=\mathcal{L}_{\mathcal{D}_{e}}(\theta_1,\theta_2)*\mathcal{L}_{\mathcal{D}_{c}}(\theta_1,\theta_2)=\theta_1^{c_h}(1-\theta_1)^{c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{n_t}$
+        \item then to make the optimization easier and more stable we can write the log likelihood as $$\ell(\theta_1,\theta_2)=log(\mathcal{L}_{\mathcal{D}_{e}\mathcal{D}_{c}}(\theta_1,\theta_2)=c_hlog(\theta_1)+c_tlog(1-\theta_1)+n_hlog(\theta_1\theta_2)+n_tlog(1-\theta_1\theta_2)$$
+    \end{itemize}
+    \item now we can being our mle which can be expressed as $$\hat{\theta}=argmax_{\theta\in \mathbb{R}^{2}}\ell(\theta_1,\theta_2)$$
+    \item so first lets find the optimal value of $\theta_2$
+    \begin{itemize}
+        \item given the log likelihood function $\ell(\theta_1,\theta_2)=c_hlog(\theta_1)+c_tlog(1-\theta_1)+n_hlog(\theta_1\theta_2)+n_tlog(1-\theta_1\theta_2)$
+        \item we can calculate the partial   with respect to $\theta_2$ as $\frac{\partial \ell}{\partial \theta_2}=\frac{nh}{\theta_1\theta_2}-\frac{n_t}{1-\theta_1\theta_2}$
+        \item we know optima will be when the partial derivative equals zero that is \\ $\frac{nh}{\theta_1\theta_2}-\frac{n_t}{1-\theta_1\theta_2}=0\\n_h(1-\theta_1\theta_2)-n_t(\theta_1\theta_2)=0
+        \\ n_h-\theta_1\theta_2n_h=n_t\theta_1\theta_2\\
+        n_h=(nh_+n_t)\theta_1\theta_2
+        \\ \theta_2^{*}=\frac{n_h}{(n_h+n_t)\theta_1}$
+    \end{itemize}
+    \item now we want to find the optimal value of $\theta_1$
+    \begin{itemize}
+        \item we know the optima will have $\theta_2=\theta_2^*=\frac{n_h}{(n_h+n_t)\theta_1}$
+        \item so we can now think of our likelihood function as 1 dimensional optimization problem $\ell(\theta_1,\theta_2^{*})=\ell(\theta_1)=c_hlog(\theta_1)+c_tlog(1-\theta_1)+n_hlog(\theta_1\theta_2^{*})+n_tlog(1-\theta_1\theta_2^{*})=c_hlog(\theta_1)+c_tlog(1-\theta_1)+n_hlog(\theta_1\frac{n_h}{(n_h+n_t)\theta_1})+n_tlog(1-\theta_1\frac{n_h}{(n_h+n_t)\theta_1})=c_hlog(\theta_1)+c_tlog(1-\theta_1)+n_hlog(\frac{n_h}{(n_h+n_t)})+n_tlog(1-\frac{n_h}{(n_h+n_t)})$
+        \item now we can take the partial derivative of this function with respect to $\theta_1$ as $\frac{\parital \ell(\theta_1)}{\partial \theta_1}=\frac{c_h}{\theta_1}-\frac{c_t}{1-\theta_1} $
+        \item setting this equal to zero yields 
+        \\ $\frac{c_h}{\theta_1}=\frac{c_t}{1-\theta_1}\\
+        c_h-\theta_1c_h=\theta_1c_t\\
+        c_h=\theta_1(c_h+c_t)\\
+        \theta_1^{*}=\frac{c_h}{c_h+c_t}$
+    \end{itemize}
+    \item this overall makes sense as we are more or less saying that our mle estimator of $\theta$ in each case is just the number of heads we observe in each data set. 
+    
+\end{itemize}
+
+
 
 \item Since the clean results are expensive, we only have a small number of those and we are worried that we may overfit the data.
 To mitigate overfitting we can use a prior distribution on $\theta_1$ if available. Let's imagine that an oracle gave use the prior $p(\theta_1) = \text{Beta}(h, t)$.
 Derive the MAP estimates for $\theta_1$ and $\theta_2$.
+\begin{itemize}
+    \color{blue}
+    \item  first lets reason about our prior
+    \begin{itemize}
+        \item as we showed in class the pdf of beta distributed prior with parameters $\alpha, \beta$  can be written as $\theta\sim beta(\alpha, \beta)\Rightarrow P(\theta)\propto (\theta)^{\alpha-1}(1-\theta)^{\beta-1}$ 
+        \item so given what we are told in the problem we know our prior of $\theta_1$ is $\theta_1\sim beta(\text{h ,t})\Rightarrow P(\theta_1)\propto (\theta_1)^{h-1}(1-\theta_1)^{t-1} $
+    \end{itemize}
+   \item next we want to derive our posterior distribution (or something proportional to it)
+   \begin{itemize}
+       \item we know our posterior distribution of the parameters $\theta_1, \theta_2$ given the observed data $\mathcal{D}_{r}, \mathcal{D}_{c}$ can be written as $P(\theta_1,\theta_2|\mathcal{D}_{r}, \mathcal{D}_{c})\propto P(\mathcal{D}_{R},\mathcal{D}_{c}|\theta_1,\theta_2)P(\theta_1)P(\theta_2)$
+       \item then using what we derived in the last section and above we can write $P(\theta_1,\theta_2|\mathcal{D}_{r}, \mathcal{D}_{c})\propto P(\mathcal{D}_{R},\mathcal{D}_{c}|\theta_1,\theta_2)P(\theta_1)P(\theta_2)=\theta_1^{c_h}(1-\theta_1)^{c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{n_t}(\theta_1)^{h-1}(1-\theta_1)^{t-1}P(\theta_2)=(\theta_1)^{h-1+c_h}(1-\theta_1)^{t-1+c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{nt}P(\theta_2)$
+       \item we make no assumptions about the prior of $\theta_2$ so i think we can ignore $P(\theta_2)$ and just write $P(\theta_1,\theta_2|\mathcal{D}_{r}, \mathcal{D}_{c})\propto (\theta_1)^{h-1+c_h}(1-\theta_1)^{t-1+c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{nt}P(\theta_2)\propto (\theta_1)^{h-1+c_h}(1-\theta_1)^{t-1+c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{nt}$
+       \item then as we know the log is a monotonic function we can take the log of our posterior and still achieve the same optimal values of $\theta$ while making our computation more simple and stable $log(P(\theta_1,\theta_2|\mathcal{D}_{r}, \mathcal{D}_{c}))\propto log((\theta_1)^{h-1+c_h}(1-\theta_1)^{t-1+c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{nt}P(\theta_2)\propto (\theta_1)^{h-1+c_h}(1-\theta_1)^{t-1+c_t}(\theta_1\theta_2)^{n_h}(1-\theta_1\theta_2)^{nt})=(h-1+c_h)log(\theta_1)+(t-1+c_t)log(1-\theta_1)+n_hlog(\theta_1\theta_2)+n_t(\theta_1\theta_2)$
+   \end{itemize}
+\item we know our map estimator is given by \\$\hat{\theta}=argmax_{\theta_1,\theta_2}P(\theta_1,\theta_2|\mathcal{D}_{r},\mathcal{D}_{e})\\=argmax_{\theta_1,\theta_2}log(P(\theta_1,\theta_2|\mathcal{D}_{r},\mathcal{D}_{e}))\\= argmax_{\theta_1,\theta_2}(h-1+c_h)log(\theta_1)+(t-1+c_t)log(1-\theta_1)+n_hlog(\theta_1\theta_2)+n_t(\theta_1\theta_2)$
+\item so call $j(\theta_1,\theta_2) $the function we are looking to optimize that is $j(\theat_1, \theta_2)=argmax_{\theta_1,\theta_2}(h-1+c_h)log(\theta_1)+(t-1+c_t)log(1-\theta_1)+n_hlog(\theta_1\theta_2)+n_t(\theta_1\theta_2)$
+\item so first we can find the optimal value of $\theta_2$
+\begin{itemize}
+    \item so we first want to take the partial derivative of j with respect to $\theta_2$ that is $\frac{\partial j(\theta_1,\theta_2)}{\theta_2}=\frac{nh}{\theta_1\theta_2}-\frac{n_t}{1-\theta_1\theta_2}$
+        \item we know optima will be when the partial derivative equals zero that is \\ $\frac{nh}{\theta_1\theta_2}-\frac{n_t}{1-\theta_1\theta_2}=0\\n_h(1-\theta_1\theta_2)-n_t(\theta_1\theta_2)=0
+        \\ n_h-\theta_1\theta_2n_h=n_t\theta_1\theta_2\\
+        n_h=(nh_+n_t)\theta_1\theta_2
+        \\ \theta_2^{*}=\frac{n_h}{(n_h+n_t)\theta_1}$
+\end{itemize}
+\item next we want to find the optimal value of $\theta_1$
+\begin{itemize}
+    \item we know our optimal tuple $(\theta_1^{*}, \theta_2^{*})$ must have $\theta_2=\theta_2^{*}=\frac{n_h}{(n_h+n_t)\theta_1}$
+    \item thus we can express $j(\theta_1, \theta_2)$ as a 1 dimensional function of $\theta_1$ 
+    \item that is $j(\theta_1,\theta_2^{*})=j(\theta_1)=(h-1+c_h)log(\theta_1)+(t-1+c_t)log(1-\theta_1)+n_hlog(\theta_1\theta_2^{*})+n_t(\theta_1\theta_2^{*})=(h-1+c_h)log(\theta_1)+(t-1+c_t)log(1-\theta_1)+n_hlog(\theta_1\frac{n_h}{(n_h+n_t)\theta_1})+n_t(\theta_1\frac{n_h}{(n_h+n_t)\theta_1})=(h-1+c_h)log(\theta_1)+(t-1+c_t)log(1-\theta_1)+n_hlog(\frac{n_h}{(n_h+n_t)})+n_t(\frac{n_h}{(n_h+n_t)})$
+    \item now we want to take the partial derivative of this function with respect to $\theta_1$ that is $\frac{\partial J(\theta_1)}{\partial \theta_1}=\frac{h-1+c_h}{\theta_1}-\frac{t-1+c_t}{1-\theta_1}$
+    \item setting our partial derivative equal to zero we see that \\
+    $\frac{h-1+c_h}{\theta_1}-\frac{t-1+c_t}{1-\theta_1}=0
+    \\  \frac{h-1+c_h}{\theta_1}=\frac{t-1+c_t}{1-\theta_1}\\
+    (h-1+c_h)(1-\theta_1)=(t-1+c_t)(\theta_1)\\
+    (h-1+c_h)-\theta_1(h-1+c_h)=(t-1+c_t)\theta_1\\
+    (h-1+c_h)=(t-1+c_t)\theta_1+\theta_1(h-1+c_h)\\
+    (h-1+c_h)=\theta_1(t+h-2+ch+c_t)\\
+    \theta_1^{*}=\frac{h-1+c_h}{t+h+2+c_h_c_t}$
+\end{itemize}
+
+
+
+
+
+\end{itemize}
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 \section{Derivation for multi-class modeling}
