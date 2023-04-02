@@ -287,15 +287,76 @@ so that is we basically have each $\psi_{i}$ looking at each element of d, which
 \subsection*{multiclass hypothesis space}
 \item so we assume that there is a discrete output space y(x), that is very large but has some structure like for instance a noun may be likely to be followed by a very or adjective but not another noun
 \item our base hypothesis space (meaning the hypothesis space for a single predictor is ) $H=\{h:X\times Y \rightarrow \mathbb{R}\}$ that is functions that map from an input and potential label h(x,y) to a compatibility score
-\item mutliclass hypothesis space $$\mathcal{F}=\{x\rightarrow argmax_{y\in y}h(x,y)}h\in H\}$$
+\item mutliclass hypothesis space $$\mathcal{F}=\{x\rightarrow argmax_{y\in y} h(x,y)h\in H\}$$
 \item our finial prediction function is $f\in \mathcal{F}$ where y is the argmax of all the compatibility scores
 \item so for each of the f in the hypothesis space there is an underlying compatibility score function 
-\subsection*{structured prediction}
-\item ee 
-\item here we go
-\item ere
-
-
-
+\subsection*{unary features}
+\item a unary feature only depends on the label at a single position $y_i$ and x 
+\item for example $\phi_{1}(x,y_i)=1(x_i=\text{runs})1(y_i=\text{verb})$ or $\phi_{2}(x,y_i)=1(x_i=\text{runs})1(y_i=\text{noun})$ 
+\item we can define features that care only about x and y 
+\item note it can only care about one label but can take into account multiple inputs for example $\phi_{3}(x,y_i)=1(x_{i=1}=\text{he})1(x_i=\text{runs})1(y_i=\text{verb})$
+\subsection*{markov features}
+\item a markov or pairwise feature only depends on two adjective labels $y_i, y_{i-1}$ and x
+\item for example $\theta_{1}(x,y_{i-1},y_i)=1(y_{i-1}=\text{pronoun})1(y_i=\text{verb})$
+\item it is possible to expand this to higher order features but that causes exponential dependencies  
+\subsection*{local feature vectors and compatibility scores}
+\item at each position i in a sequence define the local feature vector (comprised of unary feature $\phi_{i}$ and markov features $\theta_i$) as $$\psi_{i}(x,y_{i-1},y_i)=\begin{pmatrix}
+    \phi_1(x,y_i),\phi_2(x,y_i) \\ \psi_1(x,y_{i-1}, y_i), \psi_2(x,y_{i-1}, y_i) 
+\end{pmatrix}$$
+\item and the local compatibility score at position i is $<w,\psi_{i}(x,y_{i-1}, y_i)>$
+\item the compatibility score for (x,y) is the sum of local compatibility scores $\Sigma_{i}<w,\psi_{i}(x,y_{i-1}, y_i)>=<w,\Sigma_{i}\psi_{i}(x,y_{i-1}, y_i)>=<w,\psi(x,y)>$
+\item where we define the sequence feature vector by $$\psi(x,y)=\Sigma_{i}\psi_{i}(x,y_{i-1}, y_i)$$
+\subsection*{structured perceptron}
+\begin{enumerate}
+    \item given a mutliclass dataset $\mathcal{D}=\{x,y\}$ so note that this means for each of the k predictors we are learning d weights so we will in total have a weight matrix $W\in \mathbb{R}^{k \times d }$
+    \item initialize $w\leftarrow 0$
+    \item for iter=1,2...T do
+    \begin{enumerate}
+        \item for $(x,y)\in \mathcal{D}$
+        \begin{enumerate}
+        \item $\hat{y}=argmax_{y'\in y}w^t\psi({x,y'})$ highest scoring class (ie class we are most confident it is )
+        \item if $\hat{y}\neq y$ then we have made a mistake  
+        \begin{enumerate}
+            \item $w_{y}\leftarrow w_y+\psi({x,y'})$ move wights of true class closer to $\psi({x,y'})$  
+            \item $w_{\hat{y}}\leftarrow w_{\hat{y}}-\psi({x,y'})$ move the wrong class wights further from $\psi({x,y'})$.
+        \end{enumerate}
+        \item end 
+    \end{enumerate}
+    \item end 
+    \end{enumerate}
+    \item end 
+\end{enumerate}
+\item so this identical to the mutliclass case except we are using a different feature map
+\subsection*{structured hinge loss}
+\item recall that our geneal hinge loss defention is $\ell_{hinge}(y,\hat{y})=max_{y'\in y(x) }(\Delta(y,y')+<w, (\psi(x,y') -\psi(x,y) )>   )$
+\item but structured prediction is about sequences so what is the hamming loss between two sequences?
+\item the hamming loss is given by $$\Delta(y,y')=\frac{1}{L}1(y_i\neq y_{i}^{'})$$ where l is the length of the sequence
+\subsection*{arg max for sequences}
+\item the argmax problem can be difficult for sequences
+\item to compute predictions we need to find $argmax_{y\in y(x)}<w,\psi(x,y)>$ where $|y(x)|$ is exponentially large
+\item observation $\psi(x,y)$ decomposes into $\Sigma_{i}\psi_i(x,y)$
+\item the solution to this is dynamic programming 
+\item at every time step we have different words each with a potential pART of speech label  label, compute the score up tell time step t and then consider the max possible score from all the previous posabilties
+\item so in the first time step we consider the score at each nodes in teh second time step we consider all 3 possible parents and take the max of those, do this for all the nodes at each step look at all the parents and t teh end you find the max score achievable for the final node. 
+\item need to know what each node's parent was 
+\item called the viterbi algorithm
+\item there are t time steps at each time step you look at all y nodes, and y possible parents so total run time is $O(ty^2)$
+\item this is much more efficient than just doing the naive search 
+\subsection*{conditional random fields}
+\item recall that we can write logistic regression in the general form $P(y|x)=\frac{1}{z(x)}e^{w^t\psi(x,y)}$
+\item where z is a normalization constant $z(x)=\Sigma_{y\in Y}e^{w^t\psi(x,y)}$
+\item this is a probabilistic interpretation of the crf so this will output a probability distribution we can sample from 
+\item we can incorporate uniformly and markov features to this  $P(y|x)=\frac{1}{z(x)}e^{\Sigma_{t}w^t\psi(x,y_{t}, y_{t-1})}$
+\item here we can learn our weights by minimizing the regularized negative log likelihood $l(w)=\frac{-1}{N}\Sigma_{i-1}^{n}log(p(y^{i}|x^{i}))+\frac{1}{2}\lambda||w||^2=\frac{-1}{N}\Sigma_{i}\Sigma_{t}\Sigma_{k}w_k\phi_{k}(y^i_t, y^i_{t-1})+\frac{1}{n}\Sigma_{i}Z(X_i)+\frac{1}{2}\Sigma_{k}\lambda w_k^2$
+\item we deal with taking the derivative i am going to be honest i straight to not have the life force to that right now 
+\item the gradient update step ends up being the difference between the empirical update of your feture and expceation udner the model distribution
+\item in CRF we need to compute the expectation under the model distribution $P(y|x)$
+\item this as well as doing the arg max in the structured svm problem are both np hard problems
+\subsection*{crf inference}
+\item we kind of do a similar thing to the verterbi algorithm but for the expectation 
+\item there are forward and backwards way to do this 
+\item at test time we can again use viterbi to infer argmax 
+\item this can be called belief propagation 
+\item there are a lot of potential examples where crf is a good idea like pos tagging or image segmentation
 \end{itemize}
 \end{document}
