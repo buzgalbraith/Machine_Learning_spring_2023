@@ -46,16 +46,16 @@ have 1000's or millions of classes)
 \item and we break ties arbitrarily 
 \subsection*{example}
 \item suppose we have a dataset with 3 classes that looks like this \\
-\includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_1.png}
+\includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_1.png}
 \item the output of our model should be 1,2,3 for any given x 
 \item we can train 1 versus all classifiers (here we are assuming only linear classifiers) but in theory it does not matter if they are linear or not. 
-\\ \includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_2.png}
+\\ \includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_2.png}
 \item so we trained the following three classifiers with the following 3 decision boundaries 
 \item here we are assuming that each set is linearly separable from the rest. 
 \item in the ideal case only one of the classes should have a positive score and the others should have negative values
 \item there are cases where we can not linearly separate the data. 
 \item and so one versus all (with a linear assumption ) will not work here. 
-\\ \includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_3.png}
+\\ \includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_3.png}
 \item such as here 
 \subsection*{all versus all, one vs one or all pairs}
 \item as we showed above the one versus all does not work in all cases, such as when as the cases where the classes can not be serrated 
@@ -76,14 +76,14 @@ so each class gets (k-1) votes for the k-1 classifiers that take value positive 
 \item in general the classifiers will not be calibrated so we will just sum up the integer number of votes
 \subsection*{Example}
 \item suppose we again have this data set 
- \\ \includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_3.png}
+ \\ \includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_3.png}
 \item here we are assuming that each pair of classes is linearly separable this is more expressive than one versus all.
 \item   so here we are training $\begin{pmatrix}4\\2
 \end{pmatrix}=6$ classifiers 
 \item this does septate the classes 
 \subsection*{one vs all vs all vs all}
 \item here is a chart comparing on versus all and all versus all 
-\\  \includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_4.png}
+\\  \includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_4.png}
 \item here we are assuming that each pair of classes is linearly separable this is more expressive than one versus all.
 \item all vs all requires a quadratic number of classifiers while one vs all only requires a linear number of classifiers
 \item so when we are training a one vs all classifier we need to train each classifier on our total number of data points (that is all training data marked for every class)
@@ -102,7 +102,7 @@ so each class gets (k-1) votes for the k-1 classifiers that take value positive 
 \item the basic idea here is we can encode labels as binary codes  and predict the code bits directly 
 \item this allows us to train fewer binary classifiers to do the same task. 
 \item so suppose we want to do one versus all classification  with 4 classes and 4 classifiers 
-\item  \includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_5.png}
+\item  \includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_5.png}
 \item here we are one hot encoding our labels, here each class gets one representation 
 \item ideally there are only 4 situations that can happen. each of the class labels
 \item but in practice if we train our classifiers independently  it is possible for us to get results that do not neatly fit into any class  (like 1100)
@@ -112,7 +112,7 @@ so each class gets (k-1) votes for the k-1 classifiers that take value positive 
 \subsection*{error correcting output codes (ECOC) }
 \item in general you can use between log(k) and k bits to represent k classes
 \item here is an example where we use 6 bits  to represent 8 classes. 
- \item  \includegraphics[width=5cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_6.png}
+ \item  \includegraphics[width=5cm]{lecture_notes/lecture_8/immages/l8_6.png}
 \item so for instance class 3 is coded as $011011$
 \item so in this context we train one classifiers $h_i$ for each bit (so in the example 6) and classifier $h_i$ takes value 1 when the i-th bit is 1, and $-1$ when the ith bit is zero
 \item we then predict classes based on the closest label in terms of hamming distance ie we take the label which would require the minimum bit changes to get. that is in this case basically how many bits different
@@ -224,7 +224,7 @@ $$h_{i}(x)=h(x,i) $$
 \item could have the multi vector construction $w\in \mathbb{R}^{d\times k}$ but this does not scale well to large feature or output spaces
 \item we could also directly design features for each class $$\psi(x,y)=(\psi_{1}(x,y),\psi_{2}(x,y),..\psi_{d}(x,y))$$ 
 so that is we basically have each $\psi_{i}$ looking at each element of d, which upper bounds the size of our feature space to be d \\
-\includegraphics[width=10cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_8/immages/l8_9.png}
+\includegraphics[width=10cm]{lecture_notes/lecture_8/immages/l8_9.png}
 \item so here we have an example of our feature map capturing more fine detail about each part of the sentence than just using a one hot encoding that checks for the presence of every combination of words and part of speech
 \item so what is the captured in the feature map, and when we do the dot product what are we doing (we are taking the dot product between w, $\psi(x,y)$) representing a compatibility score. 
 \item so after training our $w_1..w_4$ based on our feature $\psi_{i}(x,y)$ we want the value $w_i^{t}\psi_i(x,y)$ to be large when we think having that combination of word and label is correct (so that we want  $w_1, w_3$ to be high and $w_2$ to be low)

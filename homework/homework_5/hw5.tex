@@ -266,6 +266,33 @@ you should cite the general facts you are using. {[}Hint: If $f_{1},\ldots,f_{m}
 are convex, then their pointwise maximum $f(x)=\max\left\{ f_{1}(x),\ldots,f_{m}(x)\right\} $
 is also convex.{]}
 
+\begin{itemize}
+   \color{blue}
+    \item first we can show that our regularization term is convex 
+    \begin{itemize}
+    \item first of all we know that $||w||$ is convex as it is a norm and thus the triangle inequality holds by definition meaning it is convex.
+    \item further we know $f(x)=x^2$ is convex, thus the composition $||w||^2$ will also be convex. 
+    \item finally we know multiplying a function by a constant will not effect convexity so $f(x)=\lambda||w||^2$ will be convex
+    \end{itemize}
+    \item now we want to reason about the hinge loss term $\ell_{hinge}(x,y,w)=max_{y\in Y}(\Delta(y_i,y)-<w,(\Psi(x_i,y)- \Psi(x_i,y_i))>$
+    \begin{itemize}
+        \item we know If $f_{1},\ldots,f_{m}:\mathbb{R}^{n}\to\mathbb{R}$
+are convex, then their pointwise maximum $f(x)=\max\left\{ f_{1}(x),\ldots,f_{m}(x)\right\} $
+is also convex. 
+\item so we want to first show for any given $i$ $f_{i}(w)=(\Delta(y_i,y)-<w,(\Psi(x_i,y)- \Psi(x_i,y_i))>$ will be convex 
+\item firstly we know we are only looking to see if this function is convex in w so we can disregard the $\Delta(y_i,y)$ as for our purposes it is constant
+\item now we want to see if $g(w)=<w,(\Psi(x_i,y)- \Psi(x_i,y_i))>$ will be convex
+\item we can see  $g(w)=<w,(\Psi(x_i,y)- \Psi(x_i,y_i))>=<w\Psi(x_i,y)>-<w,\Psi(x_i,y_i)>$ in other words it is a difference  of dot products where only one term depends on w.
+\item so if we can show that $h(w)=<w,c>$ is convex for any constant c
+\item so we can show $h(\lambda w+(1-\lambda) w')=<\lambda w+(1-\lambda) w',c>=<\lambda w,c>+<(1-\lambda) w',c>=\lambda< w,c>+(1-\lambda) <w',c>=\lambda h(w)+(1-\lambda)h(w')$ and thus h(w) is convex 
+\item so know that the difference of two convex functions and a function that does not depend on w (which is effectively a constant) will be convex in w , and thus $f_{i}(w)=(\Delta(y_i,y)-<w,(\Psi(x_i,y)- \Psi(x_i,y_i))>$ will be convex 
+\item so using the fact that If $f_{1},\ldots,f_{m}:\mathbb{R}^{n}\to\mathbb{R}$
+are convex, then their pointwise maximum $f(x)=\max\left\{ f_{1}(x),\ldots,f_{m}(x)\right\} $
+is also convex. we know that $\ell_{hinge}$ is convex
+    \end{itemize}
+\item finally we can see that our objective can be written as the sum $j(w)=\lambda ||w||^2+\Sigma_{i=1}^{n}max_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))]$ thus we know $j(w)$ as it is just a sum of functions we have already show to be convex. 
+\end{itemize}
+
 
 \item Since $J(w)$ is convex, it has a subgradient at every point. Give
 an expression for a subgradient of $J(w)$. You may use any standard
@@ -273,14 +300,55 @@ results about subgradients, including the result from an earlier homework
 about subgradients of the pointwise maxima of functions. (Hint: It
 may be helpful to refer to $\hat{y}_{i}=\argmax_{y\in\mathcal{Y}}\left[\Delta\left(y_{i},y\right)+\left\langle w,\Psi(x_{i},y)-\Psi(x_{i},y_{i})\right\rangle \right]$.)
 
+\begin{itemize}
+    \color{blue}
+
+\item let $\hat{y}_{i}=\argmax_{y\in\mathcal{Y}}\left[\Delta\left(y_{i},y\right)+\left\langle w,\Psi(x_{i},y)-\Psi(x_{i},y_{i})\right\rangle \right]$
+    \item given our objective function is $j(w)=\lambda ||w||^2+\Sigma_{i=1}^{n}max_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))]$
+    \item when $y_i\in \hat{y}_i$ then we can see that 
+    \begin{itemize}
+        \item in this case our hinge loss is $\ell_{hinge}=max_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]=\Delta(y_1,y_i)+<w,(\Psi(x,y_i)-\Psi(x,y_i))>=0+w^t\Psi(x,y_i)-w^t\Psi(x,y_i)=0$
+    \end{itemize}
+    \item now lets consider $y_i\not \in \hat{y}_i$ then we can see that 
+    \begin{itemize}
+        \item we can write  $\ell_{hinge}=max_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]=\Delta(y_1,y)+<w,(\Psi(x,y)-\Psi(x,y_i))>=1+w^t\Psi(x,y_i)-w^t\Psi(x,y)\geq 0$
+    \end{itemize}
+    \item we can show that our objective function is non differentiable when $y_i\in \hat{y}_i$ . 
+        \begin{itemize}
+        \item given this is the case we know that  $0=max_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]=\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>\geq 0\Rightarrow \Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>=0 \quad \forall y\in Y$ 
+        \item thus we have that $y_i\in argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]\Rightarrow\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>=0 \forall y\in Y$
+        \item  so we can define $j_i(w)=\lambda||w||^{2}+max_{y\in Y}\Delta(y\neq y_i)+<w,\Psi(x,y_i)-\Psi(x,y)>$ and when $y_i\in \hat{y}_i$ we will have  $j_i(w)=\lambda||w||^{2}+max_{y\in Y}\Delta(y\neq y_i)+<w,\Psi(x,y_i)-\Psi(x,y)>=\lambda||w||^{2}+Delta(y\neq y_i)+<w,\Psi(x,y_i)-\Psi(x,y)>+\lambda||w||^{2}\forall y \in Y$
+        \item we can wee that when $y_i\in argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]$ that $\frac{\partial j_i(w,y,y_i)}{\partial y }=2\lambda w +\frac{\partial 0}{\partial y }=2\lambda w$
+        \item and that when when $y_i\neq argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]$  we have $\frac{\partial j_i(w,y,y)}{\partial y }=2\lambda w+\frac{\partial (1+<w,(\Psi(x,y)-\Psi(x,y_i))>_}{\partial y }=2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i)$
+        \item so this function will take the same value in both cases but have different derivatives and thus be non-differentiable. 
+    \end{itemize}
+    \item so as we showed before  
+        \item thus we can finally define our subgradient as $ \partial J(w)$ = \left \{ \begin{array}{ll} \frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{n}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
+        \item and so if we set $\theta=0$ a valid subgradient could just be  $ \partial J(w)=2\lambda w+\frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}\Phi(x_i,y)-\Phi(x_i,y_i)$
+\end{itemize}
+
 
 \item Give an expression for the stochastic subgradient based on the point
 $(x_{i},y_{i})$.
 
 
+\begin{itemize}
+    \color{blue}
+    \item given the overall subgradient of the objective function is defined as\\  $ \partial J(w)$ = \left \{ \begin{array}{ll} \frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{n}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
+    \item for a given point we can write the stochastic subgradient of a single point as $ \partial J_{i}(w)$ = \left \{ \begin{array}{ll} 2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ 2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$ 
+    \item again if we set $\theta=0$ we can write this simply as  \item for a given point we can write the stochastic subgradient of a single point as $ \partial J_{i}(w)$ = \left \{ \begin{array}{ll} 2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ 2\lambda w  \quad \text{ else} \end{array} \\ 
+\end{itemize}
+
+
 \item Give an expression for a minibatch subgradient, based on the points
 $(x_{i},y_{i}),\ldots,\left(x_{i+m-1},y_{i+m-1}\right)$.
 
+
+\begin{itemize}
+    \color{blue}
+    \item given the sub sample $(x_{i},y_{i}),\ldots,\left(x_{i+m-1},y_{i+m-1}\right)$. of size m we can write our mini batch gradient as  $ \partial \hat{J}_{M}(w)$ = \left \{ \begin{array}{ll} \frac{1}{M}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{m}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
+        \item and so if we set $\theta=0$ a valid subgradient could just be  $ \partial J(w)=2\lambda w+\frac{1}{m}\Sigma_{y_i\not\in \hat{y}_i}\Phi(x_i,y)-\Phi(x_i,y_i)$
+\end{itemize}
 
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
@@ -303,6 +371,55 @@ to hinge loss:
 \ell\left(h,\left(x,y\right)\right)=\max_{y'\in\mathcal{Y}}\left[\Delta\left(y,y')\right)+h(x,y')-h(x,y)\right]=\max\left\{ 0,1-yg(x)\right\} 
 \]
 \setcounter{saveenum}{\value{enumi}}
+\begin{itemize}
+    \color{blue}
+    \item first lets establish notation 
+    \begin{itemize}
+        \item there are only two classes in this case 
+        \item lets call the correct class of the example y
+        \item lets call the incorrect class of the example $y^c$
+        \item lets call $\hat{y}=argmax_{y'\in Y}\Delta(y,y')+h(x,y')-h(x,y)$
+    \end{itemize}
+    \item so first lets look at the case where $\hat{y}=y$
+    \begin{itemize}
+        \item given this is the case we know that \\ 
+        $\ell(h,(x,y))=max_{y'\in Y}\Delta(y,y')+h(x,y')-h(x,y)=\Delta(y,\hat{y})+h(x,\hat{y})-h(x,y)=\Delta(y,y)+h(x,y)-h(x,y)=0\geq \Delta(y,y^c)+h(x,y^c)-h(x,y)$
+        \item now there are two sub cases to look at
+        \item either $y=1$ that is the true class is 1. 
+        \begin{itemize}
+            \item in this case  $\Delta(y,y^c)+h(x,y^c)-h(x,y)=\ind(1\neq -1)+g(x,-1)-g(x,1)=1-\frac{g(x)}{2}-\frac{g(x)}{2}=1-g(x)=1-g(x)(1)=1-(y)g(x)$
+        \end{itemize}
+        
+        \item or $y=-1$ that is the true class is -1
+        \begin{itemize}
+            \item in this case $\Delta(y,y^c)+h(x,y^c)-h(x,y)=\ind(-1\neq 1)+g(x,1)-g(x,-1)=1+\frac{g(x)}{2}+\frac{g(x)}{2}=1+g(x)=1-(-1)g(x)=1-(y)g(x)$
+        \end{itemize}
+        \item thus we can see that in this case we have \\$\ell(h,(x,y))=max_{y'\in Y}\Delta(y,y')+h(x,y')-h(x,y)=\Delta(y,\hat{y})+h(x,\hat{y})-h(x,y)=\Delta(y,y)+h(x,y)-h(x,y)=0\geq \Delta(y,y^c)+h(x,y^c)-h(x,y)=1-(y)g(x)$
+        \item in other words when $\hat{y}=y$ we have $\ell(h,(x,y))=max\{0,1-yg(x)\}$
+    \end{itemize}
+    \item now consider the case where $\hat{y}=y^{c}$
+    \begin{itemize}
+         \item given this is the case we know that \\ 
+        $\ell(h,(x,y))=max_{y'\in Y}\Delta(y,y')+h(x,y')-h(x,y)=\Delta(y,{y}^c)+h(x,y^c)-h(x,y)=\Delta(y,y)+h(x,y)-h(x,y)\geq \Delta(y,y)+h(x,y)-h(x,y)=0$
+        \item 
+        \item now there are two sub cases to look at
+        \item either $y=1$ that is the true class is 1.
+                \begin{itemize}
+            \item in this case  $\Delta(y,y^c)+h(x,y^c)-h(x,y)=\ind(1\neq -1)+g(x,-1)-g(x,1)=1-\frac{g(x)}{2}-\frac{g(x)}{2}=1-g(x)=1-g(x)(1)=1-(y)g(x)$
+        \end{itemize}
+        
+        \item or $y=-1$ that is the true class is -1
+        \begin{itemize}
+            \item in this case $\Delta(y,y^c)+h(x,y^c)-h(x,y)=\ind(-1\neq 1)+g(x,1)-g(x,-1)=1+\frac{g(x)}{2}+\frac{g(x)}{2}=1+g(x)=1-(-1)g(x)=1-(y)g(x)$
+        \end{itemize}
+        \item thus in either case we have $\ell(h,(x,y))=max_{y'\in Y}\Delta(y,y')+h(x,y')-h(x,y)=\Delta(y,{y}^c)+h(x,y^c)-h(x,y)=\Delta(y,y)+h(x,y)-h(x,y)=1-yg(x)\geq \Delta(y,y)+h(x,y)-h(x,y)=0$
+    \item meaning that when $\hat{y}=y^c$ we have $\ell(h,(x,y))=max\{0,1-yg(x)\}$
+    \end{itemize}
+    \item thus in either case we have  $\ell(h,(x,y))=max\{0,1-yg(x)\}$
+    \item so  $\ell(h,(x,y))=max\{0,1-yg(x)\}$ always holds in binary classification 
+\end{itemize}
+
+
 \end{enumerate}
 
 
