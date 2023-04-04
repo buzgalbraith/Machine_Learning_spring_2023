@@ -1,0 +1,269 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 9: Decision Trees }
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section*{introduction}
+\begin{itemize}
+\item i am going to try to write my in class notes on latex today and see how it goes. 
+\item these are out first inherently non linear classifier 
+\item we will also discuss ensemble tree methods. 
+\section*{Decision Trees}
+\subsection*{regression trees }
+\item previously we discussed classifiers that are typically linear, as well as non-linear extensions using kernels 
+\item but they are still fundamentally linear. 
+\item suppose we want to predict basketball player salaries. if there years are bellow a certain value
+predict a certain number, if it is greater than or equal to a certain number go to another branch and then consider there shot percentage and branch the pay based off of that 
+\item so there are three values depending on 2 features, that can be thought of as a vertical and horizontal Decision boundary that is in 2 dimensions. 
+\item in higher dimensions we just kind of scale up this idea
+\subsection*{classification}
+\item we can extend the idea naturally to classification where we just assign regions in deferent sections of our Decision thresholds as a different classes
+\item the leaf nodes gives us the value we predict 
+\item the thinking is we partition the data until we are comfortable with the outcome 
+\subsection*{tree set up}
+\item binary tree 2 children 
+\item each branch is serrated based off of an if else statement 
+\item each node has a subset of data points, and the parent node has the union of all the children data points 
+\item for a continuous variable we may say $y\leq c$ for some constant 
+\item for discrete we would say something like $y[i]=c$
+\item then the leaves are terminal nodes we use for prediction 
+\subsection*{constructing a tree }
+\item  want to find the optimal Decision tree that minimizes mean square error 
+\item often finding the exact minimum is imposable because there is a combinatorial explosion of trees
+\item we can try to approximate using a greedy approximation - that is make the best choice at each point 
+\item this may not results in the global optimal trees
+\item can think of this as a 3d cube. 
+\subsection*{how to find the best split point}
+\item we could enumerate all possible split points, and try all of them this does not work for real numbers 
+\item we are only working with a finite number of data points. that we can use to train 
+\item we want to think of all possible intervals not all possible real numbers 
+\item we only need to think about split point between two possible real values. 
+\item assume that all possible values are sorted. we think of any input within the same interval as equal 
+\item it is common to split halfway between each adjacent values 
+\item there are n examples, so we will get n-1 possible intervals
+\subsection*{overfilling}
+\item as we keep splitting data each data point gets its own region so that is pretty much a nearest neighbor model of n=1
+\item this will over fit the training data
+\item we want to have some generalization 
+\item so how do we control the complexity of our hypothesis space? could look at depth of the tree, limit the number of total nodes, limit the number of terminal nodes (ie total number of subregions), or we could require that each terminal node holds a set number of data points
+\item there is also backward pruning we can start with a really over fit tree, than slowly prune out the nodes that are similar to one another. 
+\item as we keep pruning the tree our validation error will go down to a point 
+\subsection*{what makes a good split?}
+\item we have n-1 possible split points 
+\item in classification we want to predict the majority label for each region
+\item we want splits that have a higher majority ie the region has a better consensus. 
+\item sometimes it is hard to tell which split is better, in some case prefer lower average error, in some case prefer lower variance
+\item we want in general pure nodes that have the highest consensus
+\subsection*{misclassification error in a node}
+\item $\hat{p}_{nk}$ is the error guessing a certain class 
+\item we predict that class that gets the least on average wrong for each region 
+\item there are some impurity measures for node 
+\item some a misclassification error
+\item some are gini index which want to distribution to be most balanced
+\item we can also use entropy a sa measure.  
+\item gini index and entropy both work better in practice than misclassification error 
+\item misclassification error is  aline 
+\item gini index or entropy are kind of bowed down 
+\subsection*{quantifying the impurity of a split }
+\item we can now use these ideas to quantifying the impurity of each node 
+\item and use that to quantify the impurity of e each split
+\item we can use $Q(n)$ do denote the impurity measure for each node 
+\item then we can take  weighted average of all impurity measures over all nodes in a split as the impurity measure of the split 
+\subsection*{tree interminability}
+\item small trees can be written out easily and understood 
+\item larger or deeper trees are a lot less interminable
+\item linear models are really good with linear relationships, trees are not as good with 
+linear models, 
+\item but when the thing is not linear a linear model will fail overall
+\subsection*{review}
+\item trees are non-metric they do not rely on the geometry of the space. we do not need inner products or anything like taht 
+\item they are non-linear 
+\item they are also non-parametric. a parametric model means we are not making assumptions on our data distribution but we are still learning model parameters 
+\item they are also interminable when small 
+\item cons for them are they are not good at capturing linear Decision boundaries 
+\item really large trees have very high variance
+\item they tend to over fit 
+\section*{ensemble methods}
+\subsection*{recap of stats }
+\item we have a data set that is iid.
+\item  a list of n data points 
+\item sampled form a parametric distribution $P(*|\theta)$
+\item a statistic is a function of the dataset $s=s(\mathcal{D})$ like the sample variance, mean or covariance of our data 
+\item a point estimation 
+\subsection*{bias and variance of estimators}
+\item statistic are random variables because the data set is random 
+\item standard deviation of estimators called standard error 
+\item distribution of estimator is called hte sampling distribution
+\item bias is $bias=E[\hat{\theta}]-\theta$
+\item variance is defined as usual
+\item why does variance mater if estimator is unbiased?
+\item basically because variance is risk we want to minimizes that 
+\item ideally we want low bias and low variance
+\subsection*{variance of the mean estimator}
+\item let $\hat{\theta}$ be unbiased estimator with variance $\sigma^2$
+\item in order to reduce variance we can take a lot of realizations of $\hat{\theta}$ call them $\hat{\theta}_{1}...\hat{\theta}_n$ where each were trained on a different data set then we take the average of all of them 
+\item we know that the average of an average is still unbiased
+\item $var(\frac{1}{n}\Sigma_{i}^{n}\hat{\theta}_i)=\frac{\sigma^2}{n}$
+\item but this requires that we have n different data sets to use for training 
+\item so we can have n independent prediction functions and call the average prediction function the average of our prediction functions 
+\item again averaging reduces variance of our prediction, while still being unbiased 
+\item this shows how we can get a smaller variance from many different estimators based on many different coppices of the training set. 
+\subsection*{bootstrap}
+\item we can take a sample from our original data set (assuming it is large and iid ) and treat that as a stand in for our overall population 
+\item we sample with replacement because it allows all samples to be independent
+\item we can quantify how likely it is one sample does not show up in b samples of size n. 
+\subsection*{bootstrap methods}
+\item simulate b samples from the distribution by taking b bootstrap samples of size n form the original data
+\item for each bootstrap sample we can compute our estimator of interest 
+\item we are going to use these values, as if they were drawn from the original distribution
+\item we can empirically show that this often works well. 
+\subsection*{ensample methods }
+\item we combine multiple weak models into a single stronger model 
+\item a weak model should have a higher bias, but will have a lower variance over all 
+\item we can use bootstrap idea to average and try to overcome this issue.
+\item two ideas parallel ensample (bagging) build models in parallel and average at end 
+\item or could bag where we build one model and try to build the next model sequentially to mitigate mistakes of each other 
+\subsection*{bagging }
+\item short hand for bootstrap aggregating 
+\item we take b bootstraps and fit one weak learners for each of these models 
+\item the bagged prediction function is a combination
+function (usuals the weighted average) of all prediction functions 
+\item for classification we can just take the majority vote 
+\item what is nice about this is that we can keep increasing the number of trees and it does not lead to overfilling became 
+we are not increasing the depth of each tree its self
+\item the downside of this is that the predictor is less interminable so that is not ideal, sine we would have to explain many different trees that we are using as a majority vote 
+\subsection*{out of bag error estimation}
+\item we know that around 63\% of our data will appear in our training sample 
+\item the remaining 37\% can be used as validation which we will call out of bag training data. 
+\item we can form another set that never appeared in any of our training models and use that as a validation set. 
+\item this will be a good estimator of our test error, and will help us measure current performance
+\subsection*{bagging classification example}
+\item building a single tree vs boots strapping our data 
+\item  when we sample our new data set it is likely we will end up in different tree 
+\item the model has high variance, but if we average them then we overall achieve less variance
+\item it helps the most when base learners have low bias, but have high variance
+\subsection*{motivating random forests}
+\item the motivating principle of bagging is that we can have multiple iid estimators that we can 
+average over to reduce variance 
+\item what if the estimators are correlated? for a large n the covariance will dominate our limiting the befit of averaging 
+\item bootstrap are independent samples from the training set but they are not independent from the distribution they are all depending on the same distribution
+\item so how do we reduce the
+\subsection*{random forests}
+\item we want to reduce dependance between trees. 
+\item when constructing each tree we only look at a subset of features to use as splitting variables this means that the estimators end up being 
+less correlated
+\item let m be the number of features each individual tree can chose
+\item when we start it out from one tree we have a high error, because each tree can only look at a few features
+\item but as we average more and more trees the error goes down 
+\item the one with square root of p has the lowest test error because it is reducing the correlation between our trees
+\subsection*{review}
+\item single tree has low bias high variance
+\item ensample reduce variance at the cost of some bias 
+\item can use bootstrap to simulate many samples from one dataset 
+\item bootstrap samples are however correlated
+\item so we can use random forest to try to reduce the correlation between each of our predictors so we can average them together to reduce variance
+\section*{boosting}
+\item this is a sequential method 
+\item bagging each estimator trained in parallel
+\item boosting we want to reduce the error rate of a high bias estimators by ensample estimators that are trained in sequentially (without boot strapping)
+\item like bagging boosting is a general method that is popular with Decision trees the 
+idea is to fit the data very closely as a combination of simple trees. 
+\subsection*{overview boosting}
+\item start with a weak learner (that only does a bit better than chance)
+\item each weak learner focused on different trailing examples (re weighted data ) this works because we want later models to fix the errors of the earlier ones 
+\item we will focus on ada boosting first 
+\subsection*{ada boots}
+\item the setting is binary classification $y=\{-1,1\}$
+\item we have a base hypothesis space 
+\item we want a weak learner with a single split sometimes, or a tree with very few splits, or a linear Decision function
+\subsection*{weighted training data}
+\item have a dataset that is a tuple of x,y 
+\item have a weight vector w that is associated with each sample 
+\item we have weighted empirical risk 
+\item we still have to assign the weight some where. but if we have a uniform weight it is the same as the original empirical risk 
+\subsection*{diagram}
+\item first train from training sample with uniform weights
+\item train classifier $g_1$ 
+\item up wight samples that $g_1$ got wrong to train $g_2$
+\item up wight samples that $g_1,g_2$ got wrong for $g_3$
+\item then in the end we take a final classifier which is a weighted sum of all of our classifiers weighted by there accuracy
+\subsection*{algorithm sketch}
+\item start with equal weights
+\item repeated m times
+\item train classifier on weighted training data 
+\item increase weights of points that are misclassified by current classifier
+\item  in the end predict as a weighted sum of our predictors weighted by accuracy
+\item want $\alpha_i\geq 0$ and $\alpha_i=ln(\frac{1-err_i}{err_i})$ large if estimator i does a good job
+\item higher weighted error means we assign a lower weight
+\item let $w_i$ be current weight, want $w_{i+1}$ to be weights at next round 
+\item if $g_m$ classifies $x_i$ correctly keep $w_i$ same
+\item otherwise we update it as $w_{i+1}\leftarrow w_ie^{\alpha_m}$
+\subsection*{algorithm}
+\item  initially all weights uniform
+\item i think i get the broad idea of the algorithm but it is hard to write down as he is talking 
+\item just look on slide 48 it is there.
+\subsection*{ada boost with Decision stump}
+\item Decision stump means only one Decision criteria at the root node
+\item after 120 rounds (still only having our tree depth as 1) we can learn a pretty sophisticated Decision boundary that does pretty well
+\subsection*{does ada boost over fit}
+\item all of the individual trees are quite simple, but it is possible that ada boost can over fit especially if we have a really large number of trees
+\item in practice ada boots is in general pretty resistant to over fitting. 
+\item the test error can continue to decrease even as a training eros may go up 
+\item often this algorithm does pretty well 
+\subsection*{ada boost for face detection}
+\item this is from 2001 
+\item we are trying to detect faces in images
+\item we want to understand how to locate peoples face in real time 
+\item this was done using a tweaked ada boost 
+\item it takes a pre defined weak classifier
+\item we already have a fixed set of weak classifiers one just need to be picked form there 
+\item it has a good way to do inference in real time 
+\item it has a rectangular filter, that has weights to be one or minus one 
+\item we multiply this matrix of weights with the reginal image pixels and return the sum of the 
+product within the tree. 
+\item for each box we are going to look for this little rectangular region that we can defined
+as either a vertical or rectangular split 
+\item we want to keep it simple when possible 
+\item over 180,000 Decision trees to select from even with this 
+\item how do we do this efficient?
+\subsection*{integral image}
+\item this is kinda of a dynamic programming approach
+\item store the sum in the 2d array for all pixels 
+\item and if we want the sum of in some pixels we can just subtract the areas over any rectangular region
+\item so any filter can be decomposed as a sum of rectangular region 
+\item and at most we are doing 16 times retrieval as opposed to doing multiplication 
+\subsection*{learning procedure}
+\item we can think of our learning procedure as similar to what we learned in the ada boost algorithm
+\item here we want to show that this works in different settings 
+\item so initially we set weights as certain things depending on there class  (so in this case if they are a face) this lets us up weight certain samples to over come class imbalance
+\item for each feature j we train a classifier $h_{j}$ which returns a number between zero and one then we take the one with lowest error
+\item we can update our example weights and don't update if we get it correct 
+\item the final classifier is one if we pash a certain threshold and zero otherwise 
+\item the other trick is if we have 1000 classifiers in our ensemble we can cut out certain classifiers depending on the space
+\item we can adjust the threshold of each classifier to make sure that there is no false negative since in this case we want to make sure we get all the faces. 
+\item a false negative means there is a face, but we do not think there is a face .
+\item so then if one model says that it is zero we can say that it is not a face because we have made sure that false negatives very rarely happen, then we can not run the rest of the models when there is a 0 predicted by one of them. 
+\section*{summary}
+\item boosting is used to reduce bias from shallowing Decision trees 
+\item each classifier is trained to reduce errors of its previous ensemble 
+\item ada boost is very powerful 
+\item next week we are going to make boosting algorithms more general (why are we weighting what is the objective function)
+\item what is gradient boosting?
+\item ok that is the end of lecture. 
+\item we can expand this to multi class models as well they are pretty easy to modify and expand as need be in this case 
+\item 
+\end{itemize}
+\end{document}
