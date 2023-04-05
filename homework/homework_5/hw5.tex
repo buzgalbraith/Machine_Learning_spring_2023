@@ -114,7 +114,8 @@ of previous problems.{]}
     \item so the optimal w for our regularized logistic expression can be written as  $\hat{w}=argmax_{w}\in log(\mathcal{L}_{\mathcal{D}}(w))=argmax_{w}\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))+\lambda ||w||=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\lambda w$
     \item so turning back to the map of the negative log of our posterior distribution we can write the problem as $\hat{w}=\argmax_{w}P(w|\mathcal{D})\propto argmax_{w}(log(\mathcal{L}_{\mathcal{D}}(w))+\frac{1}{2}w^t\Sigma^{-1} w)=\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))+\frac{1}{2}w^t\Sigma^{-1} w$
     \item the gradient of our posterior can be written as $\nabla_{P(w|\mathcal{D})}(w)=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\Sigma^{-1}w$
-    \item so it is clear if we set $\Sigma=I{\lambda}\Rightarrow \Sigma^{-1}w=\lambad w$ and thus we will achive the same argmax $\hat{w}$ in both cases
+    \item so it is clear if we set $\Sigma=\frac{1}{2\lambda
+    }I\Rightarrow \Sigma^{-1}w=\lambad w$ and thus we will achieve the same argmax $\hat{w}$ in both cases
 \end{itemize}
 
 
@@ -127,9 +128,9 @@ to the mode of the posterior distribution of $w$ (i.e. is equal to
 the MAP estimator). 
 \begin{itemize}
     \color{blue}
-    \item we know from last question the mode of posterior that is the map estimator is given by $\hat{w}=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\Sigma^{-1}w=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+Iw=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+w$
+    \item we know from last question the mode of posterior that is the map estimator is given by $\hat{w}=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\Sigma^{-1}w=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\frac{1}{2}Iw$
     \item we know from the last home work that our regularized erm can be expressed as  $\hat{w}=argmax_{w}\in log(\mathcal{L}_{\mathcal{D}}(w))=argmax_{w}\Sigma_{i=1}^{n}(y^i+1)log(f(w^tx_i))+(y^i-1)log(1-f(w^tx_i))+\lambda ||w||=\Sigma_{i=1}^{n}[\frac{y^i+1}{2}-f(w^tx^i)]x^{i}+\lambda w$ 
-    \item so these two expressions are equalized when $\lambda=1$
+    \item so these two expressions are equalized when $\lambda=\frac{1}{2}$
 \end{itemize}
 
 
@@ -231,7 +232,7 @@ Derive the MAP estimates for $\theta_1$ and $\theta_2$.
     (h-1+c_h)-\theta_1(h-1+c_h)=(t-1+c_t)\theta_1\\
     (h-1+c_h)=(t-1+c_t)\theta_1+\theta_1(h-1+c_h)\\
     (h-1+c_h)=\theta_1(t+h-2+ch+c_t)\\
-    \theta_1^{*}=\frac{h-1+c_h}{t+h+2+c_h_c_t}$
+    \theta_1^{*}=\frac{h-1+c_h}{t+h-2+c_h_c_t}$
 \end{itemize}
 
 
@@ -319,12 +320,12 @@ may be helpful to refer to $\hat{y}_{i}=\argmax_{y\in\mathcal{Y}}\left[\Delta\le
         \item thus we have that $y_i\in argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]\Rightarrow\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>=0 \forall y\in Y$
         \item  so we can define $j_i(w)=\lambda||w||^{2}+max_{y\in Y}\Delta(y\neq y_i)+<w,\Psi(x,y_i)-\Psi(x,y)>$ and when $y_i\in \hat{y}_i$ we will have  $j_i(w)=\lambda||w||^{2}+max_{y\in Y}\Delta(y\neq y_i)+<w,\Psi(x,y_i)-\Psi(x,y)>=\lambda||w||^{2}+Delta(y\neq y_i)+<w,\Psi(x,y_i)-\Psi(x,y)>+\lambda||w||^{2}\forall y \in Y$
         \item we can wee that when $y_i\in argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]$ that $\frac{\partial j_i(w,y,y_i)}{\partial y }=2\lambda w +\frac{\partial 0}{\partial y }=2\lambda w$
-        \item and that when when $y_i\neq argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]$  we have $\frac{\partial j_i(w,y,y)}{\partial y }=2\lambda w+\frac{\partial (1+<w,(\Psi(x,y)-\Psi(x,y_i))>_}{\partial y }=2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i)$
+        \item and that when when $y_i\neq argmax_{y\in Y}[\Delta(y,y_i)+<w,(\Psi(x,y)-\Psi(x,y_i))>]$  we have $\frac{\partial j_i(w,y,y)}{\partial y }=2\lambda w+\frac{\partial (1+<w,(\Psi(x,y)-\Psi(x,y_i))>_}{\partial y }=2\lambda w +\Psi(x_i,y)-\Psi(x_i,y_i)$
         \item so this function will take the same value in both cases but have different derivatives and thus be non-differentiable. 
     \end{itemize}
     \item so as we showed before  
-        \item thus we can finally define our subgradient as $ \partial J(w)$ = \left \{ \begin{array}{ll} \frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{n}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
-        \item and so if we set $\theta=0$ a valid subgradient could just be  $ \partial J(w)=2\lambda w+\frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}\Phi(x_i,y)-\Phi(x_i,y_i)$
+        \item thus we can finally define our subgradient as $ \partial J(w)$ = \left \{ \begin{array}{ll} \frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Psi(x_i,y)-\Psi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{n}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Psi(x_i,y)-\Psi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
+        \item and so if we set $\theta=0$ a valid subgradient could just be  $ \partial J(w)=2\lambda w+\frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}\Psi(x_i,y)-\Psi(x_i,y_i)$
 \end{itemize}
 
 
@@ -334,9 +335,9 @@ $(x_{i},y_{i})$.
 
 \begin{itemize}
     \color{blue}
-    \item given the overall subgradient of the objective function is defined as\\  $ \partial J(w)$ = \left \{ \begin{array}{ll} \frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{n}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
-    \item for a given point we can write the stochastic subgradient of a single point as $ \partial J_{i}(w)$ = \left \{ \begin{array}{ll} 2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ 2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$ 
-    \item again if we set $\theta=0$ we can write this simply as  \item for a given point we can write the stochastic subgradient of a single point as $ \partial J_{i}(w)$ = \left \{ \begin{array}{ll} 2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ 2\lambda w  \quad \text{ else} \end{array} \\ 
+    \item given the overall subgradient of the objective function is defined as\\  $ \partial J(w)$ = \left \{ \begin{array}{ll} \frac{1}{n}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Psi(x_i,y)-\Psi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{n}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Psi(x_i,y)-\Psi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
+    \item for a given point we can write the stochastic subgradient of a single point as $ \partial J_{i}(w)$ = \left \{ \begin{array}{ll} 2\lambda w +\Psi(x_i,y)-\Psi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ 2\lambda w +\theta(\Psi(x_i,y)-\Psi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$ 
+    \item again if we set $\theta=0$ we can write this simply as  \item for a given point we can write the stochastic subgradient of a single point as $ \partial J_{i}(w)$ = \left \{ \begin{array}{ll} 2\lambda w +\Psi(x_i,y)-\Psi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ 2\lambda w  \quad \text{ else} \end{array} \\ 
 \end{itemize}
 
 
@@ -346,8 +347,8 @@ $(x_{i},y_{i}),\ldots,\left(x_{i+m-1},y_{i+m-1}\right)$.
 
 \begin{itemize}
     \color{blue}
-    \item given the sub sample $(x_{i},y_{i}),\ldots,\left(x_{i+m-1},y_{i+m-1}\right)$. of size m we can write our mini batch gradient as  $ \partial \hat{J}_{M}(w)$ = \left \{ \begin{array}{ll} \frac{1}{M}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Phi(x_i,y)-\Phi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{m}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Phi(x_i,y)-\Phi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
-        \item and so if we set $\theta=0$ a valid subgradient could just be  $ \partial J(w)=2\lambda w+\frac{1}{m}\Sigma_{y_i\not\in \hat{y}_i}\Phi(x_i,y)-\Phi(x_i,y_i)$
+    \item given the sub sample $(x_{i},y_{i}),\ldots,\left(x_{i+m-1},y_{i+m-1}\right)$. of size m we can write our mini batch gradient as  $ \partial \hat{J}_{M}(w)$ = \left \{ \begin{array}{ll} \frac{1}{m}\Sigma_{y_i\not\in \hat{y}_i}2\lambda w +\Psi(x_i,y)-\Psi(x_i,y_i) \quad \text{if }  y_i\not\in \hat{y}_i  \\\\ \frac{1}{m}\Sigma_{y_i\in \hat{y}_i}2\lambda w +\theta(\Psi(x_i,y)-\Psi(x_i,y_i)) \quad \text{ else} \end{array} \\$ where $\theta\in[0,1]$
+        \item and so if we set $\theta=0$ a valid subgradient could just be  $ \partial J(w)=2\lambda w+\frac{1}{m}\Sigma_{y_i\not\in \hat{y}_i}\Psi(x_i,y)-\Psi(x_i,y_i)$
 \end{itemize}
 
 \setcounter{saveenum}{\value{enumi}}
@@ -441,6 +442,7 @@ the \texttt{OneVsAllClassifier} code is a cell that extracts the results of
 the fit and plots the decision region. You can have a look at it first to make sure you understand how the class will be used.
 \begin{itemize}
     \color{blue}
+    \item in the prediction function we use the np.argmax() function which deterministicaly break ties. However, this should not mater as the outcome of our decision\_function function is a numpy array of floats, so I don't think we really need to worry about the equality case happening. 
            \inputminted[firstline=43, lastline=103, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
@@ -467,18 +469,23 @@ with the ``multivector construction'', as described in the multiclass lecture.
 \item Complete the function \texttt{featureMap} in the skeleton code.
 \begin{itemize}
     \color{blue}
+    \item here i use the np.flatten function 
+    \item suppose the output of feature map is in $M\in \mathbb{R}^{n\times d}$. if $n\neq 1$ then squeeze does not effect M, if $n=1$ then squeeze reduces $M$ to the vector $m\in \mathbb{R}^{d}$ which makes dimensions more compatible down the road. 
+    \item 
              \inputminted[firstline=173, lastline=185, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
 \item Complete the function \texttt{sgd}.
 \begin{itemize}
     \color{blue}
+    \item here i used a falling step size because i found it helped convergence 
                \inputminted[firstline=186, lastline=209, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
 \item Complete the methods \texttt{subgradient}, \texttt{decision\_function} and \texttt{predict} from the class \texttt{MulticlassSVM}. 
 \begin{itemize}
     \color{blue}
+    \item in the subgradient function i check if the max of the hinge loss is 0, because this is equivalent to the true class being in the argmax of the hinge loss, with out needing to rely on the np.argmax() function for discrete class labels.  
                \inputminted[firstline=211, lastline=291, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
