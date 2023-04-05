@@ -235,9 +235,6 @@ class MulticlassSVM(BaseEstimator, ClassifierMixin):
         for i in range(self.num_classes):
             descions[:,i]=np.dot(self.Psi(X,i),self.coef_)
         return descions
-
-
-        return 0
             
     def predict(self, X):
         '''
