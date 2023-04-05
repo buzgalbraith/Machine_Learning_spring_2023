@@ -18,26 +18,6 @@ plt.scatter(X[:, 0], X[:, 1], c=y, s=50)
 # # One VS All
 
 # %%
-classes=set(y)
-
-def fit_single_classifier(X, y_i):
-    pass
-estimators=[0]*len(set(y))
-for target_class in set(y):
-    y_prime=(y==target_class).astype("int")
-    svm_estimator = svm.LinearSVC(loss='hinge', fit_intercept=False, C=200)
-    svm_estimator.fit(X,y_prime)
-    estimators[target_class]=svm_estimator
-# for i in range(3) :
-#     print("Coeffs %d"%i)
-#     print(estimators[i].coef_) #Will fail if you haven't implemented fit yet
-classfier_estimates=np.zeros((X.shape[0], len(set(y))))
-for target_class in set(y):
-    classfier_estimates[:,target_class]=estimators[target_class].decision_function(X)
-classfier_estimates
-np.argmax(classfier_estimates, axis=1)
-
-# %%
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 
 class OneVsAllClassifier(BaseEstimator, ClassifierMixin):  
@@ -90,7 +70,7 @@ class OneVsAllClassifier(BaseEstimator, ClassifierMixin):
                 "Base estimator doesn't have a decision_function attribute.")
         classifier_estimates=np.zeros((X.shape[0], self.n_classes ))
         for target_class in range(self.n_classes):
-            classifier_estimates[:,target_class]=estimators[target_class].decision_function(X)
+            classifier_estimates[:,target_class]=self.estimators[target_class].decision_function(X)
         return classifier_estimates
     def predict(self, X):
         """
@@ -125,9 +105,10 @@ mesh_input = np.c_[xx.ravel(), yy.ravel()]
 
 Z = clf_onevsall.predict(mesh_input)
 Z = Z.reshape(xx.shape)
-plt.contourf(xx, yy, Z, alpha=0.8)
+plt.contourf(xx, yy, Z, alpha=0.8,cmap=plt.cm.coolwarm)
 # Plot also the training points
 plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.coolwarm)
+
 plt.xlabel("X[0]")
 plt.ylabel("X[1]")
 plt.title("Decision  Boundary")
@@ -137,28 +118,6 @@ metrics.confusion_matrix(y, clf_onevsall.predict(X))
 
 # %% [markdown]
 # # Multiclass SVM
-
-# %%
-class_combinations=list(itertools.permutations([0,1,2], 2))
-target_comboination=class_combinations[0]
-psi= lambda target_combination, y: np.array([y_i in target_comboination for y_i in y])
-psi_x_y=np.zeros((len(y), 6))
-i=0
-for target_combination in itertools.permutations(set(y), 2):
-    psi_x_y[:,i]=psi(target_combination, y)
-    i=i+1
-psi_x_y.shape
-
-# %%
-psi_x=featureMap(X[0],0,3)
-psi_x.shape
-w=np.ones((6))
-y_true=0
-# y_prime=range(3)
-check_objective= lambda y_prime: zeroOne(y_true, y_prime) +  featureMap(X[0], y_prime,num_classes=3)@w - featureMap(X[0], y_true,num_classes=3)@w
-a=list(map(check_objective, range(3)))
-np.argmax(a)
-
 
 # %%
 def zeroOne(y,a) :
@@ -182,7 +141,9 @@ def featureMap(X,y,num_classes) :
     #your code goes here, and replaces following return
     x_prime=np.zeros((num_samples,num_inFeatures*num_classes))
     x_prime[:,0+(num_classes-1)*y:2+(num_classes-1)*y]=X
-    return x_prime
+    return np.squeeze(x_prime)
+
+
 def sgd(X, y, num_outFeatures, subgd, eta = 0.1, T = 10000):
     '''
     Runs subgradient descent, and outputs resulting parameter vector.
@@ -196,7 +157,7 @@ def sgd(X, y, num_outFeatures, subgd, eta = 0.1, T = 10000):
     '''
     alpha=.5
     num_samples = X.shape[0]
-    w=np.array([1]*num_outFeatures)
+    w = np.zeros(num_outFeatures)
     t=0
     indecies=list(range(num_samples))
     rng=np.random.default_rng()
@@ -238,7 +199,7 @@ class MulticlassSVM(BaseEstimator, ClassifierMixin):
         '''
         #Your code goes here and replaces the following return statement
         regularization_term=2*self.lam*w
-        check_objective= lambda y_prime: zeroOne(y, y_prime) +  self.Psi(x, y_prime)@w.T - self.Psi(x, y)@w.T
+        check_objective= lambda y_prime: self.Delta(y, y_prime) +  np.dot(w, self.Psi(x, y_prime)) - np.dot(w,self.Psi(x, y))
         a=list(map(check_objective, range(self.num_classes)))
         y_pred=np.argmax(a)
         out=np.max(a)
@@ -272,7 +233,7 @@ class MulticlassSVM(BaseEstimator, ClassifierMixin):
         #Your code goes here and replaces following return statement
         descions=np.zeros([X.shape[0],self.num_classes])
         for i in range(self.num_classes):
-            descions[:,i]=self.coef_@self.Psi(X,i).T
+            descions[:,i]=np.dot(self.Psi(X,i),self.coef_)
         return descions
 
 
@@ -287,14 +248,13 @@ class MulticlassSVM(BaseEstimator, ClassifierMixin):
 
         #Your code goes here and replaces following return statement
         classifier_estimates=self.decision_function(X)
-        print(classifier_estimates.shape)
         return np.argmax(classifier_estimates, axis=1)
 
 # %%
 #the following code tests the MulticlassSVM and sgd
 #will fail if MulticlassSVM is not implemented yet
 est = MulticlassSVM(6,lam=1)
-est.fit(X,y,eta=0.1, T=4999)
+est.fit(X,y,eta=0.1, T=5000)
 print("w:")
 print(est.coef_)
 Z = est.predict(mesh_input)
