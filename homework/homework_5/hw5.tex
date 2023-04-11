@@ -443,7 +443,7 @@ the fit and plots the decision region. You can have a look at it first to make s
 \begin{itemize}
     \color{blue}
     \item in the prediction function we use the np.argmax() function which deterministicaly break ties. However, this should not mater as the outcome of our decision\_function function is a numpy array of floats, so I don't think we really need to worry about the equality case happening. 
-           \inputminted[firstline=43, lastline=103, breaklines=True]{python}{hw_5.py}
+           \inputminted[firstline=23, lastline=84, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
 \item  Include the results of the test cell in your submission.
@@ -472,21 +472,21 @@ with the ``multivector construction'', as described in the multiclass lecture.
     \item here i use the np.flatten function 
     \item suppose the output of feature map is in $M\in \mathbb{R}^{n\times d}$. if $n\neq 1$ then squeeze does not effect M, if $n=1$ then squeeze reduces $M$ to the vector $m\in \mathbb{R}^{d}$ which makes dimensions more compatible down the road. 
     \item 
-             \inputminted[firstline=173, lastline=185, breaklines=True]{python}{hw_5.py}
+             \inputminted[firstline=132, lastline=144, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
 \item Complete the function \texttt{sgd}.
 \begin{itemize}
     \color{blue}
     \item here i used a falling step size because i found it helped convergence 
-               \inputminted[firstline=186, lastline=209, breaklines=True]{python}{hw_5.py}
+               \inputminted[firstline=147, lastline=170, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
 \item Complete the methods \texttt{subgradient}, \texttt{decision\_function} and \texttt{predict} from the class \texttt{MulticlassSVM}. 
 \begin{itemize}
     \color{blue}
     \item in the subgradient function i check if the max of the hinge loss is 0, because this is equivalent to the true class being in the argmax of the hinge loss, with out needing to rely on the np.argmax() function for discrete class labels.  
-               \inputminted[firstline=211, lastline=291, breaklines=True]{python}{hw_5.py}
+               \inputminted[firstline=172, lastline=251, breaklines=True]{python}{hw_5.py}
 \end{itemize}
 
 \item Following the multiclass
