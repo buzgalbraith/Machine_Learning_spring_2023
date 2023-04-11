@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 9 Decision  Trees}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section*{introduction}
+\begin{itemize}
+\item Decision trees are an inherently non linear type of model
+\item they are lso a good way to understand Ensemble  methods. 
+\section*{Decision trees}
+\item regression trees try to predict a continuous outcome 
+\item classification trees try to predict a discrete class.
+\item a binary tree has 2 children nodes there are also multi-way trees that have more 
+\item each node contains a subset of teh data 
+\item the data splits created by each node involve only a single feature 
+\item for continuous variables the splits are always of the form $x_{i}\leq y$
+\item for discrete variables we partition the values into two stets 
+\item predictors are made in the leaf nodes 
+\subsection*{constructing the tree }
+\item our goal is to find the boxes $R_1\dots R_J$ that minimize
+ $\Sigma_{j=1}^{J}\Sigma_{i\in R_{j}}(y_i-\hat{y}_{R_{j}})$ subject to 
+ complexity constraints 
+\item the issue with this is finding the true optimal binary tree is computationally
+intractable
+\item so instead we use a greedy algorithm  (that is we take the best choice at every step)
+where we start at the root and on our first step take the splits that would 
+result in the minimal loss, and then pass the data split like that to the next
+step and have each for each of those sections pick the best splits
+and continue this until we hit some stopping criteria
+\item we only split regions defined in the last step at each current step 
+we predict based on the mean value of a terminal node ie $\hat{y}_{R_{m}}=mean(y_i|x_i\in R_{m})$ 
+\item so building a tree like this we are making the best local choice at every step but are unlikely to reach the overall optimal choice
+\item \includegraphics*[width=10cm]{/home/buzgalbraith/work/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_9/immages/l9_1.png}
+\item 
+\end{itemize}
+\end{document}

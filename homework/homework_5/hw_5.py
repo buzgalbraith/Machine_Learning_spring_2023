@@ -245,7 +245,7 @@ class MulticlassSVM(BaseEstimator, ClassifierMixin):
 
         #Your code goes here and replaces following return statement
         classifier_estimates=self.decision_function(X)
-        return np.argmax(classifier_estimates, axis=1)
+     np.argmax(classifier_estimates, axis=1)
 
 # %%
 #the following code tests the MulticlassSVM and sgd
