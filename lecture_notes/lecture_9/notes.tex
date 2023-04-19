@@ -43,11 +43,12 @@ and continue this until we hit some stopping criteria
 \item we only split regions defined in the last step at each current step 
 we predict based on the mean value of a terminal node ie $\hat{y}_{R_{m}}=mean(y_i|x_i\in R_{m})$ 
 \item so building a tree like this we are making the best local choice at every step but are unlikely to reach the overall optimal choice
-\item \includegraphics*[width=10cm]{lecture_notes/lecture_9/immages/l9_1.png}
+%\item \includegraphics{/home/buzgalbraith/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_9/immages/l9_1.png}
 \item so the left is how the tree looks for regression 
 \item each node, is a binary decision with a condition that splits the tree remaining data into 2 groups in the binary case 
 \item the the right side, is the search space. as you can see node (that is condition) make s a linear subdivision of our search space. 
-\item \includegraphics[width=10cm]{lecture_notes/lecture_9/immages/l9_2.jpg}
+\item \includegraphics[width=10cm]{/home/buzgalbraith/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_9/immages/l9_1.png}
+%\item \includegraphics{/home/buzgalbraith/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_9/immages/l9_2.jpg}
 \item geometrically this looks like this kind of step wise division as can be seen in this chart. 
 \subsection*{ finding the best split point}
 \item there are infinitely many split points for each feature. 
