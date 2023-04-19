@@ -1,10 +1,10 @@
-This is e-pTeX, Version 3.141592653-p3.9.1-210218-2.6 (utf8.euc) (TeX Live 2022/dev/Debian) (preloaded format=platex 2023.3.19)  11 APR 2023 12:28
+This is e-pTeX, Version 3.141592653-p3.9.1-210218-2.6 (utf8.euc) (TeX Live 2022/dev/Debian) (preloaded format=platex 2023.3.19)  29 MAR 2023 18:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**notes.tex
-(./notes.tex
+**hw5_draft.tex
+(./hw5_draft.tex
 pLaTeX2e <2021-11-15> (based on LaTeX2e <2021-11-15> patch level 1)
 L3 programming layer <2022-01-21>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -597,8 +597,8 @@ File: l3backend-dvips.def 2022-01-12 L3 backend support: dvips
 \g__pdf_backend_link_int=\count305
 \g__pdf_backend_link_sf_int=\count306
 )
-No file notes.aux.
-\openout1 = `notes.aux'.
+(./hw5_draft.aux)
+\openout1 = `hw5_draft.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
 LaTeX Font Info:    ... okay on input line 15.
@@ -623,9 +623,8 @@ LaTeX Font Info:    ... okay on input line 15.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 15.
 LaTeX Font Info:    ... okay on input line 15.
 Package hyperref Info: Link coloring OFF on input line 15.
-(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
-
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
@@ -637,14 +636,13 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 15.
 LaTeX Info: Redefining \pageref on input line 15.
 LaTeX Info: Redefining \nameref on input line 15.
+
+(./hw5_draft.out) (./hw5_draft.out)
 \@outlinefile=\write4
-\openout4 = `notes.out'.
-
-
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
+\openout4 = `hw5_draft.out'.
 
 LaTeX Font Info:    Trying to load font information for U+msa on input line 18.
+
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -659,48 +657,45 @@ LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <14.4> not available
 (Font)              Font shape `JT1/gt/m/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <14.4> not available
 (Font)              Font shape `JY1/gt/m/n' tried instead on input line 19.
-LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 32.
-LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 32.
- [1
 
-]
+Overfull \hbox (32.22235pt too wide) in paragraph at lines 22--23
+[]\OT1/cmr/m/n/10 so the like-li-hood of our data set with pa-ram-e-ter $\OML/c
+mm/m/it/10 w$ \OT1/cmr/m/n/10 is $\OMS/cmsy/m/n/10 L[]\OT1/cmr/m/n/10 (\OML/cmm
+/m/it/10 w\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/
+10 y[]:::y[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 x[]:::x[]; w\OT1/cmr/m/n/10 )$ 
+ []
 
-./notes.tex:50: LaTeX Error: Cannot determine size of graphic in /home/buzgalbr
-aith/school/spring_2023/Machine_Learning_spring_2023/lecture_notes/lecture_9/im
-mages/l9_1.png (no BoundingBox).
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.50 .../lecture_notes/lecture_9/immages/l9_1.png}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+Overfull \hbox (11.03508pt too wide) in paragraph at lines 26--27
+[]\OT1/cmr/m/n/10 then as-sum-ing -1 is a valid con-stant of pro-por-tion-al-it
+y we can write $\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 w\OMS/cmsy/
+m/n/10 jD\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 /
+ []
 
-File: /home/buzgalbraith/school/spring_2023/Machine_Learning_spring_2023/lectur
-e_notes/lecture_9/immages/l9_1.png Graphic file (type eps)
 
-</home/buzgalbraith/school/spring_2023/Machine_Learning_spring_2023/lecture_not
-es/lecture_9/immages/l9_1.png> [2] [3] (./notes.aux)
+Overfull \hbox (12.31392pt too wide) in paragraph at lines 26--27
+\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 Dj\OML/cmm/m/it/10 w\OT1/cm
+r/m/n/10 )\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 w\OT1/cmr/m/n/10 
+) \OMS/cmsy/m/n/10 / ^^@\OT1/cmr/m/n/10 ([]^^F[](1 + \OML/cmm/m/it/10 y[]\OT1/c
+mr/m/n/10 )\OML/cmm/m/it/10 log\OT1/cmr/m/n/10 ([]) + (1 \OMS/cmsy/m/n/10 ^^@ \
+OML/cmm/m/it/10 y[]\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 log\OT1/cmr/m/n/10 (1 \OMS
+/cmsy/m/n/10 ^^@ []\OT1/cmr/m/n/10 ))\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cm
+m/m/it/10 w\OT1/cmr/m/n/10 )$ 
+ []
 
-Package rerunfilecheck Warning: File `notes.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
+[1
 
-Package rerunfilecheck Info: Checksums for `notes.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  D41D8CD98F00B204E9800998ECF8427E;0.
+] (./hw5_draft.aux)
+Package rerunfilecheck Info: File `hw5_draft.out' has not changed.
+(rerunfilecheck)             Checksum: 602C2C8213466B2B44146D080A379162;47.
  ) 
 Here is how much of TeX's memory you used:
- 19856 strings out of 478741
- 371669 string characters out of 5860982
- 670642 words of memory out of 5000000
- 37926 multiletter control sequences out of 15000+600000
+ 19836 strings out of 478741
+ 369875 string characters out of 5860982
+ 671761 words of memory out of 5000000
+ 37911 multiletter control sequences out of 15000+600000
  487628 words of font info for 99 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 100i,6n,104p,4147b,411s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 100i,6n,104p,390b,329s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on notes.dvi (3 pages, 20708 bytes).
+Output written on hw5_draft.dvi (1 page, 16428 bytes).

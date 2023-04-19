@@ -197,6 +197,7 @@ where $m=yf(x)$ is the margin.
   
 \item Give the expression of the negative gradient step direction, or pseudo residual, $-{\bf g}_{m}$ for the logistic loss as a function of the prediction function $f_{m-1}$ at the previous iteration and the dataset points $\{(x_i, y_i)\}_{i=1}^n$. What is the dimension of $g_{m}$?\\
 
+
 \begin{itemize}
     \color{blue}
     \item we can write $\ell(x_i,y_i)=ln(1+e^{-y_if(x_i)})$
@@ -213,6 +214,9 @@ where $m=yf(x)$ is the margin.
     \item our value for $h_m$ will be given as $$h_m=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[g_i-h(x_i)]^2=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[(\frac{y_i}{1+e^{y_if_{m-1}(x_i)}})-h(x_i)]^2$$
 \end{itemize}
 
+=======
+\item Write an expression for $h_{m}$ as an argmin over functions $h$ in $\cf$.\\
+
   
 \item Load the MNIST dataset using the helper preprocessing function in the skeleton code.Using the scikit learn implementation of \texttt{GradientBoostingClassifier}, with the logistic loss (\texttt{loss=`deviance'}) and trees of maximum depth 3, fit the data with 2, 5, 10, 100 and 200 iterations (estimators). Plot the train and test accurary as a function of the number of estimators.\\
 
@@ -226,6 +230,7 @@ where $m=yf(x)$ is the margin.
 \item Another type of ensembling method we discussed in class are random forests. Explain in your own words the construction principle of random forests.\\
 
 
+
 \begin{itemize}
     \color{blue}
     \item single trees tend to overfit the data they are trained on and thus have high variance. 
@@ -236,11 +241,13 @@ where $m=yf(x)$ is the margin.
     \item this is done by allowing each tree to only split on some random subset of the total features of our dataset. this prevents a case where all of trees would be completely determined by a small number of highly predictive features. 
 \end{itemize}
 
+
 \item Using the scikit learn implementation of \texttt{RandomForestClassifier}\footnote{\url{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html\#sklearn.ensemble.RandomForestClassifier}},
 with the entropy loss (\texttt{criterion=`entropy'}) and trees of maximum depth 3, fit the preprocessed binary MNIST dataset with 2, 5, 10, 50, 100 and 200 estimators.\\
 
 \item What general remark can you make on overfitting for Random Forests and Gradient Boosted Trees? Which method achieves the best train accuracy overall? Is this result expected? 
 Can you think of a practical disadvantage of the best performing method? How do the algorithms compare in term of test accuracy? \\
+
 
 
 \begin{itemize}
@@ -252,6 +259,7 @@ Can you think of a practical disadvantage of the best performing method? How do 
     \item the Gradient boosting classifier having a higher test accuracy of 0.9985 and the random forest having a test accuracy of 0.9987 so we slightly better test accuracy on the random forest model
     \item this is expected because both models have similar train accuracy, and the random forest is parallel so we would expect it to overfit less. 
 \end{itemize}
+
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 
