@@ -77,6 +77,13 @@ assignments.
 \setcounter{enumi}{\value{saveenum}}
 \item Complete the \texttt{compute\_entropy} and \texttt{compute\_gini}
 functions.\\
+          
+           \begin{itemize}
+           \color{blue}
+               \item 
+           \inputminted[firstline=32, lastline=54, breaklines=True]{python}{hw6.py}
+\end{itemize}
+           
 
 
 \item Complete the class \texttt{Decision\_Tree}, given in
@@ -92,16 +99,41 @@ a recursive procedure. We should have as many \texttt{Decision\_Tree}
 objects as there are nodes in the tree. We will not implement pruning\textbf{
 }here. Some additional details are given in the skeleton code.\\
 
+ \begin{itemize}
+           \color{blue}
+               \item 
+           \inputminted[firstline=57, lastline=183, breaklines=True]{python}{hw6.py}
+\end{itemize}
 
 \item Run the code provided that builds trees for the two-dimensional
 classification data. Include the results. For debugging, you may want
 to compare results with sklearn's decision tree (code provided in the skeleton code). For visualization,
 you'll need to install \texttt{graphviz}.\\
 
+ \begin{itemize}
+           \color{blue}
+               \item here are what my plots look like for a fixed min sample of 2, and max depth from 1 to 6\\
+           \includegraphics[width=10cm]{homework/homework_6/images/hw6_1.png}
+           \item here is what sklearn's model produced with a min sample of 2 and max depth of 2 \\\includegraphics[width=10cm]{homework/homework_6/images/hw6_2.png}
+           \item these plots are pretty similar so that is good
+\end{itemize}
+           
+
+
 \item  Complete the function \texttt{mean\_absolute\_deviation\_around\_median}
 (MAE). Use the code provided to fit the \texttt{Regression\_Tree} to
 the krr dataset using both the MAE loss and median predictions. Include
 the plots for the 6 fits.\\
+
+ \begin{itemize}
+           \color{blue}
+               \item here is my MAE code \\
+           \inputminted[firstline=298, lastline=311, breaklines=True]{python}{hw6.py}
+           \item here is what my plots look like for min sample size of 3 and max depth 1,2,3,4,5,10 
+           \\ \includegraphics[width=15cm]{homework/homework_6/images/hw6_3.png
+           }
+\end{itemize}
+
 
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
@@ -167,11 +199,25 @@ h_{m}=\argmin_{h\in\cf}\sum_{i=1}^{n}\left[\left(y_{i}-f_{m-1}(x_{i})\right)-h(x
 algorithm to compute the argmin, you should use sklearn's regression tree. You should use
 the square loss for the tree splitting rule (\texttt{criterion} keyword argument) and use the default sklearn leaf prediction rule from the \texttt{predict} method \footnote{Examples of usage are given in the skeleton code to debug previous problems, and you can check the docs \url{https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html}}. We will also use a constant step size $\nu$.\\
 
+ \begin{itemize}
+           \color{blue}
+               \item 
+           \inputminted[firstline=440, lastline=492, breaklines=True]{python}{hw6.py}
+\end{itemize}
+
+
 
 \item Run the code provided to build gradient
 boosting models on the regression data sets \texttt{krr-train.txt}, and
 include the plots generated. For debugging you can use the sklearn implementation of \texttt{GradientBoostingRegressor}\footnote{\url{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html}}.
 \setcounter{saveenum}{\value{enumi}}\\
+
+
+ \begin{itemize}
+           \color{blue}
+               \item 
+           \includegraphics[width=15cm]{homework/homework_6/images/hw6_4.png}
+\end{itemize}
 
 
 \end{enumerate}
@@ -197,11 +243,31 @@ where $m=yf(x)$ is the margin.
   
 \item Give the expression of the negative gradient step direction, or pseudo residual, $-{\bf g}_{m}$ for the logistic loss as a function of the prediction function $f_{m-1}$ at the previous iteration and the dataset points $\{(x_i, y_i)\}_{i=1}^n$. What is the dimension of $g_{m}$?\\
 
+
+\begin{itemize}
+    \color{blue}
+    \item we can write $\ell(x_i,y_i)=ln(1+e^{-y_if(x_i)})$
+    \item further the psudeoresidual for the ith example is given by $g_i=\frac{\partial \ell(y_i, f(x_i))}{\partial f(x_i)}=\frac{\partial ln(1+e^{-y_if(x_i)})}{\partial f(x_i)}=\frac{y_ie^{-y_if(x_i)}}{1+e^{-y_if(x_i)}}=\frac{y_i}{1+e^{y_if(x_i)}}$
+    \item there are n total tuples of the form $(x_i,y_i)$ in our dataset thus $g=$ \begin{pmatrix}\frac{\partial \ell(y_i, f(x_1))}{\partial f(x_i)}\\\cdots\\\frac{\partial \ell(y_i, f(x_i))}{\partial f(x_n)}
+    \end{pmatrix}$ \in \mathbb{R}^{n}$
+\end{itemize}
+
 \item Write an expression for $h_{m}$ as an argmin over functions $h$ in $\cf$.\\
+
+\begin{itemize}
+    \color{blue}
+    \item given our base hypothesis space $\mathcal{H}$
+    \item our value for $h_m$ will be given as $$h_m=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[g_i-h(x_i)]^2=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[(\frac{y_i}{1+e^{y_if_{m-1}(x_i)}})-h(x_i)]^2$$
+\end{itemize}
+
 
   
 \item Load the MNIST dataset using the helper preprocessing function in the skeleton code.Using the scikit learn implementation of \texttt{GradientBoostingClassifier}, with the logistic loss (\texttt{loss=`deviance'}) and trees of maximum depth 3, fit the data with 2, 5, 10, 100 and 200 iterations (estimators). Plot the train and test accurary as a function of the number of estimators.\\
 
+ \begin{itemize}
+           \color{blue}
+               \item \includegraphics[width=15cm]{homework/homework_6/images/hw6_5.png}
+\end{itemize}
 
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
@@ -211,11 +277,40 @@ where $m=yf(x)$ is the margin.
   \setcounter{enumi}{\value{saveenum}}
 \item Another type of ensembling method we discussed in class are random forests. Explain in your own words the construction principle of random forests.\\
 
+
+\begin{itemize}
+    \color{blue}
+    \item single trees tend to overfit the data they are trained on and thus have high variance. 
+    \item they however are very simple, inheritable and can fit non-linear relationships and thus are ideal for ensemble models 
+    \item both bagging trees and random forests, aim to build parallel ensemble models, that is they build all their models at the same time (as opposed to sequential models) 
+    \item Bagging does this by training many independent smaller trees on boostrapped samples of the data, which is theoretically great, however the assumption of Independence between the trees is violated by the boostrapping process. this means that if we are trying to fit a large number of trees with the bagging procedure our trees will become high correlated, and the goal of averaging across them to reduce variance is lost 
+    \item random forest try to avoid the dependence between tries by modifying each of the inner trees training process. 
+    \item this is done by allowing each tree to only split on some random subset of the total features of our dataset. this prevents a case where all of trees would be completely determined by a small number of highly predictive features. 
+\end{itemize}
+
 \item Using the scikit learn implementation of \texttt{RandomForestClassifier}\footnote{\url{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html\#sklearn.ensemble.RandomForestClassifier}},
 with the entropy loss (\texttt{criterion=`entropy'}) and trees of maximum depth 3, fit the preprocessed binary MNIST dataset with 2, 5, 10, 50, 100 and 200 estimators.\\
 
+ \begin{itemize}
+           \color{blue}
+               \item \includegraphics[width=15cm]{homework/homework_6/images/hw6_6.png}
+\end{itemize}
+
+
+
 \item What general remark can you make on overfitting for Random Forests and Gradient Boosted Trees? Which method achieves the best train accuracy overall? Is this result expected? 
 Can you think of a practical disadvantage of the best performing method? How do the algorithms compare in term of test accuracy? \\
+\begin{itemize}
+    \color{blue}
+    \item both random forest and Gradient boosted classification models in general tend to overfit. However in the case of this dataset, potentially due to the fact we are just doing binary classification on a really large dataset they do not seem to have overfit. this is evidenced as in both cases the accuracy of model on the training data and test data seems to be increasing in the number of estimators. where as we would expect if the models were over fitting the testing accuracy to start falling at some point 
+    \item the Gradient boosted classification model has a very slight  advantage in terms train accuracy with an average accuracy of 1 compared to the best training accuracy of the random forest model being 0.9978.
+    \item yes this is expected as gradient boosted classification is a sequential ensemble method compared to random forest which are a parallel ensemble model, so it makes sense gradient boosted classification would do better. 
+    \item a disadvantage of gradient boosted classifiers is they take much longer to train for only a slight increase in training accuracy, and as it is a sequential model the gradient boosted classifier could overfit the data.  
+    \item the Gradient boosting classifier having a higher test accuracy of 0.9985 and the random forest having a test accuracy of 0.9987 so we slightly better test accuracy on the random forest model
+    \item this is expected because both models have similar train accuracy, and the random forest is parallel so we would expect it to overfit less. 
+\end{itemize}
+
+
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 
