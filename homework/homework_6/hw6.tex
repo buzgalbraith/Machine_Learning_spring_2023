@@ -247,8 +247,8 @@ where $m=yf(x)$ is the margin.
 \begin{itemize}
     \color{blue}
     \item we can write $\ell(x_i,y_i)=ln(1+e^{-y_if(x_i)})$
-    \item further the psudeoresidual for the ith example is given by $g_i=\frac{\partial \ell(y_i, f(x_i))}{\partial f(x_i)}=\frac{\partial ln(1+e^{-y_if(x_i)})}{\partial f(x_i)}=\frac{y_ie^{-y_if(x_i)}}{1+e^{-y_if(x_i)}}=\frac{y_i}{1+e^{y_if(x_i)}}$
-    \item there are n total tuples of the form $(x_i,y_i)$ in our dataset thus $g=$ \begin{pmatrix}\frac{\partial \ell(y_i, f(x_1))}{\partial f(x_i)}\\\cdots\\\frac{\partial \ell(y_i, f(x_i))}{\partial f(x_n)}
+    \item further the psuedo resisted for the ith example is given the negative partial derivative of the loss with respect to our current prediction function (that is the function we have learned up to step $m-1 $   $g_i=-\frac{\partial \ell(y_i, f_{m-1}(x_i))}{\partial f_{m-1}(x_i)}=-\frac{\partial ln(1+e^{-y_if_{m-1}(x_i)})}{\partial f_{m-1}(x_i)}=\frac{y_ie^{-y_if_{m-1}(x_i)}}{1+e^{-y_if_{m-1}(x_i)}}=\frac{y_i}{1+e^{y_if_{m-1}(x_i)}}$
+    \item there are n total tuples of the form $(x_i,y_i)$ in our dataset thus $g=$ \begin{pmatrix}\frac{\partial \ell(y_i, f_{m-1}(x_1))}{\partial f_{m-1}(x_1)}\\\cdots\\\frac{\partial \ell(y_i, f_{m-1}(x_1))}{\partial f(x_n)}
     \end{pmatrix}$ \in \mathbb{R}^{n}$
 \end{itemize}
 
@@ -257,7 +257,7 @@ where $m=yf(x)$ is the margin.
 \begin{itemize}
     \color{blue}
     \item given our base hypothesis space $\mathcal{H}$
-    \item our value for $h_m$ will be given as $$h_m=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[g_i-h(x_i)]^2=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[(\frac{y_i}{1+e^{y_if_{m-1}(x_i)}})-h(x_i)]^2$$
+    \item our value for $h_m$ will be given as $$h_m=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[-g_i-h(x_i)]^2=argmin_{h\in \mathcal{H}}\Sigma_{i=1}^{n}[(\frac{y_i}{1+e^{y_if_{m-1}(x_i)}})-h(x_i)]^2$$
 \end{itemize}
 
 
@@ -302,9 +302,9 @@ with the entropy loss (\texttt{criterion=`entropy'}) and trees of maximum depth 
 Can you think of a practical disadvantage of the best performing method? How do the algorithms compare in term of test accuracy? \\
 \begin{itemize}
     \color{blue}
-    \item both random forest and Gradient boosted classification models in general tend to overfit. However in the case of this dataset, potentially due to the fact we are just doing binary classification on a really large dataset they do not seem to have overfit. this is evidenced as in both cases the accuracy of model on the training data and test data seems to be increasing in the number of estimators. where as we would expect if the models were over fitting the testing accuracy to start falling at some point 
+    \item both random forest and Gradient boosted classification models in general tend to overfit. It does not appear that this was the case in this example, this is likely due to the fact that we are only using max depth =3 for each learner so all independent learners are fairly week. this is evidenced as in both cases the accuracy of model on the training data and test data seems to be increasing in the number of estimators. where as we would expect if the models were over fitting the testing accuracy to start falling at some point 
     \item the Gradient boosted classification model has a very slight  advantage in terms train accuracy with an average accuracy of 1 compared to the best training accuracy of the random forest model being 0.9978.
-    \item yes this is expected as gradient boosted classification is a sequential ensemble method compared to random forest which are a parallel ensemble model, so it makes sense gradient boosted classification would do better. 
+    \item yes this is expected as gradient boosted classification is a sequential, which fits each week learner to correct the error of the last which will naturally fit tend to fit the training data pretty closely compared to random forests which are a parallel ensemble model which fit n weak learners all at once on different subsets of the datas features, so it makes sense gradient boosted classification would do better. 
     \item a disadvantage of gradient boosted classifiers is they take much longer to train for only a slight increase in training accuracy, and as it is a sequential model the gradient boosted classifier could overfit the data.  
     \item the Gradient boosting classifier having a higher test accuracy of 0.9985 and the random forest having a test accuracy of 0.9987 so we slightly better test accuracy on the random forest model
     \item this is expected because both models have similar train accuracy, and the random forest is parallel so we would expect it to overfit less. 
