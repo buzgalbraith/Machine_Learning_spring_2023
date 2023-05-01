@@ -68,7 +68,7 @@ def test_node_backward(node, init_vals, delta=1e-7):
 def test_ComputationGraphFunction(graph, input_vals, outcome_vals, parameter_vals, delta=1e-7):
     graph.set_parameters(parameter_vals)
     _, gradients = graph.get_gradients(input_vals, outcome_vals)
-
+    gradients["w2"]=gradients["w2"].flatten()
     overall_max_rel_err = -1
     for param in parameter_vals:
         val = parameter_vals[param]

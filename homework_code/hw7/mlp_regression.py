@@ -17,9 +17,29 @@ class MLPRegression(BaseEstimator, RegressorMixin):
         self.max_num_epochs = max_num_epochs
         self.step_size = step_size
 
-        # Build computation graph
-        # TODO: ADD YOUR CODE HERE
-
+        # # Build computation graph
+        # # TODO: ADD YOUR CODE HERE
+        # """ 
+        # Parameters:
+        # inputs: list of ValueNode objects containing inputs (in the ML sense)
+        # outcomes: list of ValueNode objects containing outcomes (in the ML sense)
+        # parameters: list of ValueNode objects containing values we will optimize over
+        # prediction: node whose 'out' variable contains our prediction
+        # objective:  node containing the objective for which we compute the gradient
+        # """
+        self.W = [nodes.ValueNode(node_name = "W1"),nodes.ValueNode(node_name = "w2")]
+        self.x = nodes.ValueNode("x")
+        self.b = [nodes.ValueNode(node_name = "b1"),nodes.ValueNode(node_name = "b2")]
+        self.y = nodes.ValueNode("y")
+        self.a = nodes.AffineNode(self.W[0], self.x, self.b[0], "affine")
+        self.h = nodes.TanhNode(a = self.a,node_name="tanh")
+        self.inputs = [self.x]
+        self.outcomes = [self.y]
+        self.parameters = self.W + self.b 
+        self.prediction = nodes.AffineNode(W=self.W[1],x=self.h, b=self.b[1],node_name= "prediction")
+        self.objective = nodes.SquaredL2DistanceNode(a=self.prediction, b=self.y, node_name="objective")
+        self.graph = graph.ComputationGraphFunction(inputs=self.inputs, outcomes= self.outcomes, 
+                                        parameters=self.parameters, prediction=self.prediction, objective=self.objective )
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
         y = y.reshape(-1)

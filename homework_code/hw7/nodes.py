@@ -179,7 +179,32 @@ class AffineNode(object):
         x: node for which x.out is a numpy array of shape (d)
         b: node for which b.out is a numpy array of shape (m) (i.e. vector of length m)
     """
-    pass
+    def __init__(self, W, x, b, node_name):
+        self.W = W
+        self.x = x
+        self.b = b
+        self.node_name = node_name
+    def forward(self):
+        self.out = self.W.out @ self.x.out + self.b.out ## affine transformation
+        if(self.out.shape == ()):
+            self.d_out = np.zeros((1))    
+        else:
+            self.d_out = np.zeros(self.out.shape)
+        return self.out
+    def backward(self):
+        try:
+            dx = self.W.out.T @ self.d_out 
+        except:
+            dx = self.W.out.reshape(-1, 1) @ self.d_out 
+        dW = self.d_out.reshape(-1, 1) @ self.x.out.reshape(1, -1)
+        db = self.d_out
+        self.W.d_out = dW
+        self.x.d_out = dx
+        self.b.d_out = db
+        return self.d_out
+    def get_predecessors(self):
+       return [self.W, self.x, self.b]
+        
 
 
 class TanhNode(object):
@@ -187,7 +212,21 @@ class TanhNode(object):
         Parameters:
         a: node for which a.out is a numpy array
     """
-    pass
+    def __init__(self, a , node_name):
+        self.a = a
+        self.node_name = node_name
+    def forward(self):
+        self.out = np.tanh(self.a.out)
+        self.d_out = np.zeros(self.out.shape)
+        return self.out
+    def backward(self):
+        da = 0
+        self.a.d_out = self.d_out * (1 - np.square(self.out))
+        return self.d_out
+    
+    def get_predecessors(self):
+        return [self.a]
+        
 
 
 class SoftmaxNode(object):
