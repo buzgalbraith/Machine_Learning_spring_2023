@@ -48,7 +48,7 @@ class TestNodes(unittest.TestCase):
                           "b2": np.array(np.random.randn()) }
 
         max_rel_err = test_utils.test_ComputationGraphFunction(estimator.graph, input_vals, outcome_vals, parameter_vals)
-        print("max error = {0}".format(max_rel_err))
+
         max_allowed_rel_err = 1e-3
         self.assertTrue(max_rel_err < max_allowed_rel_err)
 
