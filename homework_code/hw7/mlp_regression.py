@@ -31,12 +31,13 @@ class MLPRegression(BaseEstimator, RegressorMixin):
         self.x = nodes.ValueNode("x")
         self.b = [nodes.ValueNode(node_name = "b1"),nodes.ValueNode(node_name = "b2")]
         self.y = nodes.ValueNode("y")
+        
         self.a = nodes.AffineNode(self.W[0], self.x, self.b[0], "affine")
         self.h = nodes.TanhNode(a = self.a,node_name="tanh")
         self.inputs = [self.x]
         self.outcomes = [self.y]
         self.parameters = self.W + self.b 
-        self.prediction = nodes.AffineNode(W=self.W[1],x=self.h, b=self.b[1],node_name= "prediction")
+        self.prediction = nodes.VectorScalarAffineNode(w=self.W[1],x=self.h, b=self.b[1],node_name= "prediction")
         self.objective = nodes.SquaredL2DistanceNode(a=self.prediction, b=self.y, node_name="objective")
         self.graph = graph.ComputationGraphFunction(inputs=self.inputs, outcomes= self.outcomes, 
                                         parameters=self.parameters, prediction=self.prediction, objective=self.objective )

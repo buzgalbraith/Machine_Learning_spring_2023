@@ -134,7 +134,7 @@ class L2NormPenaltyNode(object):
         self.d_out = np.zeros(self.out.shape)
         return self.out
     def backward(self):
-        d_w = self.d_out * 2 * self.l2_reg * self.w.out
+        d_w += self.d_out * 2 * self.l2_reg * self.w.out
         self.w.d_out += d_w
         return self.d_out
     def get_predecessors(self):
@@ -186,23 +186,26 @@ class AffineNode(object):
         self.b = b
         self.node_name = node_name
     def forward(self):
-        self.out = self.W.out @ self.x.out + self.b.out ## affine transformation
-        if(self.out.shape == ()):
-            self.d_out = np.zeros((1))    
-        else:
-            self.d_out = np.zeros((self.out.shape))
+        #self.out = self.W.out @ self.x.out + self.b.out ## affine transformation
+        self.out = np.dot(self.W.out, self.x.out) + self.b.out ## affine transformation
+        
+        # if(self.out.shape == ()):
+        #     self.d_out = np.zeros((1))    
+        # else:
+        self.d_out = np.zeros((self.out.shape))
+
         return self.out
     def backward(self):
         dW = self.d_out.reshape(-1, 1) @ self.x.out.reshape(1, -1)
         db = self.d_out
-        if(self.W.node_name == "w2"):
-            self.W.out = self.W.out.reshape(1, -1)
-            dW = dW.flatten()
-            db = db.flatten()[0]
+        # if(self.W.node_name == "w2"):
+        #     self.W.out = self.W.out.reshape(1, -1)
+        #     dW = dW.flatten()
+        #     db = db.flatten()[0]
         dx = self.W.out.T @ self.d_out 
-        self.W.d_out = dW
-        self.x.d_out = dx
-        self.b.d_out = db
+        self.W.d_out += dW
+        self.x.d_out += dx
+        self.b.d_out += db
         return self.d_out
     def get_predecessors(self):
        return [self.W, self.x, self.b]
@@ -223,7 +226,9 @@ class TanhNode(object):
         return self.out
     def backward(self):
         da = 0
-        self.a.d_out = self.d_out * (1 - np.square(self.out))
+        ##print("size of tanhout", self.out.shape)
+        
+        self.a.d_out += self.d_out * (1 - np.square(self.out))
         return self.d_out
     
     def get_predecessors(self):
@@ -236,7 +241,28 @@ class SoftmaxNode(object):
         Parameters:
         z: node for which z.out is a numpy array
     """
-    pass
+    def __init__(self, z, node_name):
+        self.z = z
+        self.node_name = node_name
+    def forward(self):
+        exp_array = np.exp(self.z.out)
+        self.out = exp_array / sum(exp_array)
+        ##print(self.z.node_name)
+        self.d_out = np.zeros( (self.out.shape[0], self.out.shape[0]) )
+        return self.out
+    def backward(self):
+        out_vector = self.out.reshape((-1,1))
+        dz = np.diagflat(self.out) - np.dot(out_vector, out_vector.T)
+        ##print("dz is", dz.shape)
+        ##print(self.d_out.shape)
+        d_z_prime =self.d_out @ dz.T
+        ##print(d_z_prime.shape, "prime")
+        ##print("z_shape", self.z.d_out.shape )
+        self.z.d_out += d_z_prime
+        ##print(self.z.d_out.shape, "zout")
+        return self.d_out
+    def get_predecessors(self):
+        return [self.z]
 
 
 class NLLNode(object):
@@ -245,4 +271,24 @@ class NLLNode(object):
         y_hat: a node that contains all predictions
         y_true: a node that contains all labels
     """
-    pass
+    def __init__(self, y_hat, y_true, node_name) -> None:
+        self.y_hat = y_hat
+        self.y_true = y_true
+        self.node_name = node_name
+    def forward(self):
+        ##print(self.y_hat.out)
+        #self.out = 
+        self.out = np.sum(self.y_true.out * np.logaddexp(0,-self.y_hat.out) + (1-self.y_true.out) * np.logaddexp(0,self.y_hat.out))
+        ##print(self.out)
+        ##print(self.y_hat.node_name)
+        self.d_out = np.zeros((self.out.shape))
+        ##print("there",self.d_out.shape)
+        return self.out
+    def backward(self):
+        d_y_hat = self.out * (1-self.out) 
+        ##print("here", d_y_hat)
+        self.y_hat.d_out += self.d_out * d_y_hat  
+        ##print("went thru")
+        return self.d_out
+    def get_predecessors(self):
+        return [self.y_hat,self.y_true]

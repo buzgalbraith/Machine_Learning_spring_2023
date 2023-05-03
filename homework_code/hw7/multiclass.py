@@ -29,9 +29,23 @@ class MulticlassClassifier(BaseEstimator, RegressorMixin):
 
         # Build computation graph
         # TODO: add your code here
-
+        self.W = [nodes.ValueNode(node_name = "W1"),nodes.ValueNode(node_name = "W2")]
+        self.x = nodes.ValueNode("x")
+        self.b = [nodes.ValueNode(node_name = "b1"),nodes.ValueNode(node_name = "b2")]
+        self.y = nodes.ValueNode("y")
+        self.a = nodes.AffineNode(self.W[0], self.x, self.b[0], "affine")
+        self.h = nodes.TanhNode(a = self.a,node_name="tanh")
+        self.inputs = [self.x]
+        self.outcomes = [self.y]
+        self.parameters = self.W + self.b 
+        self.z = nodes.AffineNode(W=self.W[1],x=self.h, b=self.b[1],node_name= "z")
+        self.prediction = nodes.SoftmaxNode(z=self.z, node_name="soft max")
+        self.objective = nodes.NLLNode(y_hat=self.prediction, y_true=self.y, node_name="objective")
+        self.graph = graph.ComputationGraphFunction(inputs=self.inputs, outcomes= self.outcomes, 
+                                        parameters=self.parameters, prediction=self.prediction, objective=self.objective )
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
+        #print("intended shape of x is", X.shape)
         y = y.reshape(-1)
         s = self.init_param_scale
         init_values = {"W1": s * np.random.standard_normal((self.num_hidden_units, num_ftrs)),
@@ -46,7 +60,7 @@ class MulticlassClassifier(BaseEstimator, RegressorMixin):
             for j in shuffle:
                 obj, grads = self.graph.get_gradients(input_values = {"x": X[j]},
                                                     outcome_values = {"y": y[j]})
-                #print(obj)
+                ##print(obj)
                 epoch_obj_tot += obj
                 # Take step in negative gradient direction
                 steps = {}
@@ -57,7 +71,7 @@ class MulticlassClassifier(BaseEstimator, RegressorMixin):
 
             if epoch % 50 == 0:
                 train_loss = calculate_nll(self.predict(X,y), y)
-                print("Epoch ",epoch," Ave training loss: ",train_loss)
+                #print("Epoch ",epoch," Ave training loss: ",train_loss)
 
     def predict(self, X, y=None):
         try:
@@ -89,7 +103,7 @@ def main():
 
     # report test accuracy
     test_acc = np.sum(np.argmax(estimator.predict(test_X), axis=1)==test_y)/len(test_y)
-    print("Test set accuracy = {:.3f}".format(test_acc))
+    #print("Test set accuracy = {:.3f}".format(test_acc))
 
 
 if __name__ == '__main__':

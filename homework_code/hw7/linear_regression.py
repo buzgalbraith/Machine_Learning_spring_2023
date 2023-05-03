@@ -57,7 +57,6 @@ class LinearRegression(BaseEstimator, RegressorMixin):
                     steps[param_name] = -self.step_size * grads[param_name]
                 self.graph.increment_parameters(steps)
                 #pdb.set_trace()
-            print(l)    
             if epoch % 5 == 0:
                 print("Epoch ", epoch, ": average objective value=", epoch_obj_tot/num_instances)
 

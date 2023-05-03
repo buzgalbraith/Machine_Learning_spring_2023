@@ -50,6 +50,7 @@ class TestNodes(unittest.TestCase):
         max_rel_err = test_utils.test_ComputationGraphFunction(estimator.graph, input_vals, outcome_vals, parameter_vals)
 
         max_allowed_rel_err = 1e-3
+
         self.assertTrue(max_rel_err < max_allowed_rel_err)
 
 
