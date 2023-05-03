@@ -104,6 +104,7 @@ class SquaredL2DistanceNode(object):
 
     def backward(self):
         d_a = self.d_out * 2 * self.a_minus_b
+        self.b.d_out=self.b.d_out.reshape(-1,1)
         d_b = -self.d_out * 2 * self.a_minus_b
         self.a.d_out += d_a
         self.b.d_out += d_b
@@ -189,15 +190,16 @@ class AffineNode(object):
         if(self.out.shape == ()):
             self.d_out = np.zeros((1))    
         else:
-            self.d_out = np.zeros(self.out.shape)
+            self.d_out = np.zeros((self.out.shape))
         return self.out
     def backward(self):
-        try:
-            dx = self.W.out.T @ self.d_out 
-        except:
-            dx = self.W.out.reshape(-1, 1) @ self.d_out 
         dW = self.d_out.reshape(-1, 1) @ self.x.out.reshape(1, -1)
         db = self.d_out
+        if(self.W.node_name == "w2"):
+            self.W.out = self.W.out.reshape(1, -1)
+            dW = dW.flatten()
+            db = db.flatten()[0]
+        dx = self.W.out.T @ self.d_out 
         self.W.d_out = dW
         self.x.d_out = dx
         self.b.d_out = db

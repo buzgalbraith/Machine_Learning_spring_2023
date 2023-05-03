@@ -57,6 +57,7 @@ def test_node_backward(node, init_vals, delta=1e-7):
             partial_est = np.sum(d_out * local_partial_est) # this is the chain rule
             partial_backward = parent.d_out[it.multi_index] # partial as computed by backward
             #pdb.set_trace()
+            print()
             rel_err = relative_error(partial_est, partial_backward)
             max_rel_err = max(max_rel_err, rel_err)
             it.iternext()
@@ -68,7 +69,6 @@ def test_node_backward(node, init_vals, delta=1e-7):
 def test_ComputationGraphFunction(graph, input_vals, outcome_vals, parameter_vals, delta=1e-7):
     graph.set_parameters(parameter_vals)
     _, gradients = graph.get_gradients(input_vals, outcome_vals)
-    gradients["w2"]=gradients["w2"].flatten()
     overall_max_rel_err = -1
     for param in parameter_vals:
         val = parameter_vals[param]
