@@ -153,15 +153,32 @@ eventually be able to pass.
 \begin{enumerate}
 \setcounter{enumi}{\value{saveenum}}
 \item Complete the class \texttt{L2NormPenaltyNode} in \texttt{nodes.py}. If your code is correct, you should be able to pass test\_L2NormPenaltyNode in \texttt{ridge\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
-\item Complete the class \texttt{SumNode} in \texttt{nodes.py}. If your code is correct, you should be able to pass test\_SumNode in \texttt{ridge\_regression.t.py}. Please attach a screenshot that shows the test results for this question. 
+\begin{itemize}
+    \color{blue}
+    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_1.JPG}
+\end{itemize}
+\item Complete the class \texttt{SumNode} in \texttt{nodes.py}. If your code is correct, you should be able to pass test\_SumNode in \texttt{ridge\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
+\begin{itemize}
+    \color{blue}
+    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_2.JPG}
+\end{itemize}
 \item Implement ridge regression with $w$ regularized and $b$ unregularized.
 Do this by completing the \texttt{\_\_init\_\_} method in \texttt{ridge\_regression.py},
 using the classes created above. When complete, you should be able
 to pass the tests in \texttt{ridge\_regression.t.py}. Report the average
-square error on the \textbf{training} set for the parameter settings
+    square error on the \textbf{training} set for the parameter settings
 given in the \texttt{main()} function. 
+\begin{itemize}
+    \color{blue}
+    \item after 2000 iterations the ridge regression model with $\lambda=1$ achieves an average training loss of $\mathbf{0.1995250209504278}$
+    \item after 500 iterations the ridge regression model with $\lambda =0$ achieves an average training loss of $\mathbf{0.049861304080757875}$ 
+    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_3.JPG}
+    \item the above plot shows more or less what we would expect in that the model with $\lambda=1$ under fits the data, and the model with $\lambda =0$ over fits the data 
+\end{itemize}
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
+
+
 
 \section{Multilayer Perceptron}
 
@@ -330,11 +347,20 @@ product.
 to propagate the gradient with respect to $x$ as well, since when
 we stack these layers, $x$ will itself be the output of another node
 that depends on our optimization parameters. If your code is correct, you should be able to pass test\_AffineNode in \texttt{mlp\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
+\begin{itemize}
+    \color{blue}
+         \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_9.png}
+\end{itemize}
+
 \item Complete the class \texttt{TanhNode} in \texttt{nodes.py}. As you'll
 recall, $\frac{d}{dx}\tanh(x)=1-\tanh^{2}x$. Note that in the forward
 pass, we'll already have computed $\tanh$ of the input and stored
 it in self.out. So make sure to use \texttt{self.out} and not recalculate
 it in the backward pass. If your code is correct, you should be able to pass test\_TanhNode in \texttt{mlp\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
+\begin{itemize}
+    \color{blue}
+         \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_10.png}
+\end{itemize}
 \item Implement an MLP by completing the skeleton code in \texttt{mlp\_regression.py}
 and making use of the nodes above. Your code should pass the tests
 provided in \texttt{mlp\_regression.t.py}. Note that to break the symmetry
@@ -346,6 +372,23 @@ MLP, we can take the original scalar as input, in the hopes that it
 will learn nonlinear features on its own, using the hidden layers.
 In practice, it is quite challenging to get such a neural network
 to fit as well as one where we provide features.
+
+\begin{itemize}
+    \color{blue}
+    \item after 2000 iterations the model with out features  achieves an average training loss of $\mathbf{0.2623843239311297}$
+    \item after 500 iterations the model with features achieves an average training loss of $\mathbf{0.04437488692581432}$ 
+    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_11.JPG}
+\end{itemize}
+
+
+\begin{itemize}
+    \color{blue}
+    \item after 2000 iterations the ridge regression model with $\lambda=1$ achieves an average training loss of $\mathbf{0.1995250209504278}$
+    \item after 500 iterations the ridge regression model with $\lambda =0$ achieves an average training loss of $\mathbf{0.049861304080757875}$ 
+    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_3.JPG}
+    \item the above plot shows more or less what we would expect in that the model with $\lambda=1$ under fits the data, and the model with $\lambda =0$ over fits the data 
+\end{itemize}
+
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 
