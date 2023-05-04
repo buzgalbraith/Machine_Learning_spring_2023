@@ -155,11 +155,14 @@ eventually be able to pass.
 \item Complete the class \texttt{L2NormPenaltyNode} in \texttt{nodes.py}. If your code is correct, you should be able to pass test\_L2NormPenaltyNode in \texttt{ridge\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
 \begin{itemize}
     \color{blue}
-    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_1.JPG}
+    
+    \item           \inputminted[firstline=119, lastline=144, breaklines=True]{python}{hw7.py}
+    \item here is my result as well\\ \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_1.JPG}
 \end{itemize}
 \item Complete the class \texttt{SumNode} in \texttt{nodes.py}. If your code is correct, you should be able to pass test\_SumNode in \texttt{ridge\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
 \begin{itemize}
     \color{blue}
+    \item           \inputminted[firstline=147, lastline=175, breaklines=True]{python}{hw7.py}
     \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_2.JPG}
 \end{itemize}
 \item Implement ridge regression with $w$ regularized and $b$ unregularized.
@@ -170,6 +173,7 @@ to pass the tests in \texttt{ridge\_regression.t.py}. Report the average
 given in the \texttt{main()} function. 
 \begin{itemize}
     \color{blue}
+    \item \inputminted[firstline=307, lastline=326, breaklines=True]{python}{hw7.py}
     \item after 2000 iterations the ridge regression model with $\lambda=1$ achieves an average training loss of $\mathbf{0.1995250209504278}$
     \item after 500 iterations the ridge regression model with $\lambda =0$ achieves an average training loss of $\mathbf{0.049861304080757875}$ 
     \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_3.png}
@@ -350,6 +354,7 @@ we stack these layers, $x$ will itself be the output of another node
 that depends on our optimization parameters. If your code is correct, you should be able to pass test\_AffineNode in \texttt{mlp\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
 \begin{itemize}
     \color{blue}
+        \item \inputminted[firstline=177, lastline=214, breaklines=True]{python}{hw7.py}
          \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_9.png}
 \end{itemize}
 
@@ -360,6 +365,7 @@ it in self.out. So make sure to use \texttt{self.out} and not recalculate
 it in the backward pass. If your code is correct, you should be able to pass test\_TanhNode in \texttt{mlp\_regression.t.py}. Please attach a screenshot that shows the test results for this question.
 \begin{itemize}
     \color{blue}
+    \item \inputminted[firstline=217, lastline=237, breaklines=True]{python}{hw7.py}
          \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_10.png}
 \end{itemize}
 \item Implement an MLP by completing the skeleton code in \texttt{mlp\_regression.py}
@@ -376,19 +382,13 @@ to fit as well as one where we provide features.
 
 \begin{itemize}
     \color{blue}
+    \item \inputminted[firstline=418, lastline=449, breaklines=True]{python}{hw7.py}
     \item after 2000 iterations the model with out features  achieves an average training loss of $\mathbf{0.2623843239311297}$
     \item after 500 iterations the model with features achieves an average training loss of $\mathbf{0.04437488692581432}$ 
     \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_11.png}
 \end{itemize}
 
 
-\begin{itemize}
-    \color{blue}
-    \item after 2000 iterations the ridge regression model with $\lambda=1$ achieves an average training loss of $\mathbf{0.1995250209504278}$
-    \item after 500 iterations the ridge regression model with $\lambda =0$ achieves an average training loss of $\mathbf{0.049861304080757875}$ 
-    \item \includegraphics[width = 15cm]{homework_code/hw7/immages/hw_7_3.png}
-    \item the above plot shows more or less what we would expect in that the model with $\lambda=1$ under fits the data, and the model with $\lambda =0$ over fits the data 
-\end{itemize}
 
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
@@ -405,9 +405,34 @@ which corresponds to applying a Softmax to the scores. Given this probabilistic 
 \begin{enumerate}
 \setcounter{enumi}{\value{saveenum}}
 \item Implement a Softmax node. We provided skeleton code for class SoftmaxNode in \texttt{nodes.py}. If your code is correct, you should be able to pass test\_SoftmaxNode in \texttt{multiclass.t.py}. Please attach a screenshot that shows the test results for this question.
+\begin{itemize}
+    \color{blue}
+
+\inputminted[firstline=241, lastline=267, breaklines=True]{python}{hw7.py}
+
+\item here is my output\\
+\includegraphics[width=15cm]{homework_code/hw7/immages/hw7_13.png}
+\end{itemize}
+
 \item Implement a negative log-likelihood loss node for multiclass
 classification. We provided skeleton code for class NLLNode in \texttt{nodes.py}. The test code for this question is combined with the test code for the next question.
+\begin{itemize}
+    \color{blue}
+
+\inputminted[firstline=270, lastline=297, breaklines=True]{python}{hw7.py}
+\end{itemize}
+
+
 \item Implement a MLP for multiclass classification by completing the skeleton code in \texttt{multiclass.py}. Your code should pass the tests in test\_multiclass provided in multiclass.t.py. Please attach a screenshot that shows the test results for this question.
+\begin{itemize}
+    \color{blue}
+
+\inputminted[firstline=548, lastline=572, breaklines=True]{python}{hw7.py}
+\item i could not get this last question working but i hope the effort is worth partial credit 
+
+\end{itemize}
+
+
 \setcounter{saveenum}{\value{enumi}}
 \end{enumerate}
 

@@ -103,7 +103,7 @@ def main():
 
     # report test accuracy
     test_acc = np.sum(np.argmax(estimator.predict(test_X), axis=1)==test_y)/len(test_y)
-    #print("Test set accuracy = {:.3f}".format(test_acc))
+    print("Test set accuracy = {:.3f}".format(test_acc))
 
 
 if __name__ == '__main__':

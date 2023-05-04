@@ -1,5 +1,3 @@
-## nodes .py
-
 """Computation graph node types
 
 Nodes must implement the following methods:
@@ -136,8 +134,8 @@ class L2NormPenaltyNode(object):
         self.d_out = np.zeros(self.out.shape)
         return self.out
     def backward(self):
-        d_w += self.d_out * 2 * self.l2_reg * self.w.out
-        self.w.d_out += d_w
+        d_w = self.d_out * 2 * self.l2_reg * self.w.out
+        self.w.d_out = d_w
         return self.d_out
     def get_predecessors(self):
         ## Your code
@@ -205,9 +203,9 @@ class AffineNode(object):
         #     dW = dW.flatten()
         #     db = db.flatten()[0]
         dx = self.W.out.T @ self.d_out 
-        self.W.d_out += dW
-        self.x.d_out += dx
-        self.b.d_out += db
+        self.W.d_out = dW
+        self.x.d_out = dx
+        self.b.d_out = db
         return self.d_out
     def get_predecessors(self):
        return [self.W, self.x, self.b]
@@ -228,7 +226,7 @@ class TanhNode(object):
         return self.out
     def backward(self):
         da = 0
-        print("size of tanhout", self.out.shape)
+        ###print("size of tanhout", self.out.shape)
         
         self.a.d_out += self.d_out * (1 - np.square(self.out))
         return self.d_out
@@ -249,19 +247,19 @@ class SoftmaxNode(object):
     def forward(self):
         exp_array = np.exp(self.z.out)
         self.out = exp_array / sum(exp_array)
-        print(self.z.node_name)
-        self.d_out = np.zeros( (self.out.shape[0], self.out.shape[0]) )
+        ###print(self.z.node_name)
+        self.d_out = np.zeros( ( self.out.shape[0]) )
         return self.out
     def backward(self):
         out_vector = self.out.reshape((-1,1))
         dz = np.diagflat(self.out) - np.dot(out_vector, out_vector.T)
-        print("dz is", dz.shape)
-        print(self.d_out.shape)
-        d_z_prime =self.d_out @ dz.T
-        print(d_z_prime.shape, "prime")
-        print("z_shape", self.z.d_out.shape )
+        #print("dz is", dz.shape)
+        #print(self.d_out.shape)
+        d_z_prime = self.d_out @ dz.T
+        ###print(d_z_prime.shape, "prime")
+        ###print("z_shape", self.z.d_out.shape )
         self.z.d_out += d_z_prime
-        print(self.z.d_out.shape, "zout")
+        ###print(self.z.d_out.shape, "zout")
         return self.d_out
     def get_predecessors(self):
         return [self.z]
@@ -278,25 +276,24 @@ class NLLNode(object):
         self.y_true = y_true
         self.node_name = node_name
     def forward(self):
-        print(self.y_hat.out)
-        #self.out = 
-        self.out = np.sum(self.y_true.out * np.logaddexp(0,-self.y_hat.out) + (1-self.y_true.out) * np.logaddexp(0,self.y_hat.out))
-        print(self.out)
-        print(self.y_hat.node_name)
+        self.out = np.argmax(np.sum(np.log(self.y_hat.out))) 
         self.d_out = np.zeros((self.out.shape))
-        print("there",self.d_out.shape)
         return self.out
     def backward(self):
-        d_y_hat = self.out * (1-self.out) 
-        print("here", d_y_hat)
+        d_y_hat = -(self.out * (self.out -1))
+        #d_y_hat = self.out - self.y_true.out
+        ##print("here", d_y_hat)
+        #print("this is ", d_y_hat)
+        #print("there ", self.d_out)
         self.y_hat.d_out += self.d_out * d_y_hat  
-        print("went thru")
+        #print( self.y_hat.d_out)
+        ###print("went thru")
         return self.d_out
     def get_predecessors(self):
-        return [self.y_hat,self.y_true]
+        return [self.y_hat, self.y_true] ## maybee add back in y_true
 
 
-## Ridge.py
+## Ridge.pyç≈
 import setup_problem
 from sklearn.base import BaseEstimator, RegressorMixin
 import numpy as np
@@ -340,7 +337,7 @@ class RidgeRegression(BaseEstimator, RegressorMixin):
             for j in shuffle:
                 obj, grads = self.graph.get_gradients(input_values = {"x": X[j]},
                                                     outcome_values = {"y": y[j]})
-                #print(obj)
+                ###pr(obj)
                 epoch_obj_tot += obj
                 # Take step in negative gradient direction
                 steps = {}
@@ -350,7 +347,7 @@ class RidgeRegression(BaseEstimator, RegressorMixin):
 
             if epoch % 50 == 0:
                 train_loss = sum((y - self.predict(X,y)) **2)/num_instances
-                print("Epoch ",epoch,": Ave objective=",epoch_obj_tot/num_instances," Ave training loss: ",train_loss)
+                ##pr("Epoch ",epoch,": Ave objective=",epoch_obj_tot/num_instances," Ave training loss: ",train_loss)
 
     def predict(self, X, y=None):
         try:
@@ -464,7 +461,7 @@ class MLPRegression(BaseEstimator, RegressorMixin):
             for j in shuffle:
                 obj, grads = self.graph.get_gradients(input_values = {"x": X[j]},
                                                     outcome_values = {"y": y[j]})
-                #print(obj)
+                ###pr(obj)
                 epoch_obj_tot += obj
                 # Take step in negative gradient direction
                 steps = {}
@@ -475,7 +472,7 @@ class MLPRegression(BaseEstimator, RegressorMixin):
 
             if epoch % 50 == 0:
                 train_loss = sum((y - self.predict(X,y)) **2)/num_instances
-                print("Epoch ",epoch,": Ave objective=",epoch_obj_tot/num_instances," Ave training loss: ",train_loss)
+                ##pr("Epoch ",epoch,": Ave objective=",epoch_obj_tot/num_instances," Ave training loss: ",train_loss)
 
     def predict(self, X, y=None):
         try:
@@ -572,7 +569,7 @@ class MulticlassClassifier(BaseEstimator, RegressorMixin):
                                         parameters=self.parameters, prediction=self.prediction, objective=self.objective )
     def fit(self, X, y):
         num_instances, num_ftrs = X.shape
-        print("intended shape of x is", X.shape)
+        ##pr("intended shape of x is", X.shape)
         y = y.reshape(-1)
         s = self.init_param_scale
         init_values = {"W1": s * np.random.standard_normal((self.num_hidden_units, num_ftrs)),
@@ -587,7 +584,7 @@ class MulticlassClassifier(BaseEstimator, RegressorMixin):
             for j in shuffle:
                 obj, grads = self.graph.get_gradients(input_values = {"x": X[j]},
                                                     outcome_values = {"y": y[j]})
-                #print(obj)
+                ###pr(obj)
                 epoch_obj_tot += obj
                 # Take step in negative gradient direction
                 steps = {}
@@ -598,7 +595,7 @@ class MulticlassClassifier(BaseEstimator, RegressorMixin):
 
             if epoch % 50 == 0:
                 train_loss = calculate_nll(self.predict(X,y), y)
-                print("Epoch ",epoch," Ave training loss: ",train_loss)
+                ##pr("Epoch ",epoch," Ave training loss: ",train_loss)
 
     def predict(self, X, y=None):
         try:
@@ -630,7 +627,7 @@ def main():
 
     # report test accuracy
     test_acc = np.sum(np.argmax(estimator.predict(test_X), axis=1)==test_y)/len(test_y)
-    print("Test set accuracy = {:.3f}".format(test_acc))
+    ##pr("Test set accuracy = {:.3f}".format(test_acc))
 
 
 if __name__ == '__main__':
