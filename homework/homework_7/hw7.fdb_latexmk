@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1683159172 "/Users/hochwagenlab/Desktop/buz/school/Machine_Learning_spring_2023/homework/homework_7/hw7.tex" "hw7.pdf" "hw7" 1683159173 2
+["pdflatex"] 1683159306 "/Users/hochwagenlab/Desktop/buz/school/Machine_Learning_spring_2023/homework/homework_7/hw7.tex" "hw7.pdf" "hw7" 1683159306 2
   "/Users/hochwagenlab/Desktop/buz/school/Machine_Learning_spring_2023/homework/homework_7/hw7.tex" 1683159171 23270 50be2973173f5ba7504cdde603504ee0 ""
-  "/dev/null" 1683159171 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "/dev/null" 1683159306 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1136768653 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
@@ -130,9 +130,9 @@
   "homework_code/hw7/immages/hw_7_2.JPG" 0 -1 0 ""
   "homework_code/hw7/immages/hw_7_3.png" 0 -1 0 ""
   "homework_code/hw7/immages/hw_7_9.png" 0 -1 0 ""
-  "hw7.aux" 1683159172 2160 66f95bda5c79be1f738b8f1fedbeb7f4 "pdflatex"
-  "hw7.out" 1683159172 1251 8b3d8e9c0aa4ae9b84e2ff9ed7995ac9 "pdflatex"
-  "hw7.py" 1683159148 23630 c039e8b7b62e8da76d4da8036b0692b4 ""
+  "hw7.aux" 1683159306 2160 66f95bda5c79be1f738b8f1fedbeb7f4 "pdflatex"
+  "hw7.out" 1683159306 1251 8b3d8e9c0aa4ae9b84e2ff9ed7995ac9 "pdflatex"
+  "hw7.py" 1683159305 23630 c039e8b7b62e8da76d4da8036b0692b4 ""
   "hw7.tex" 1683159171 23270 50be2973173f5ba7504cdde603504ee0 ""
   "math_commands.tex" 1683139250 14391 73ed5bc9ccb8aafc4bd18a1e1117ed14 ""
   (generated)
