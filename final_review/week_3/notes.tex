@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
-\title{Lecture X.Y Topic}
+\title{Lecture 3: feature selection and regularization}
 \author{wbg231 }
 \date{December 2022}
 \newcommand{\R}{$\mathbb{R}$}
@@ -16,8 +16,61 @@
 
 \maketitle
 
-\section{introduction}
+\section{complexity of the hypothesis space}
 \begin{itemize}
-\item 
+\item there is a trade off between the size of the hypothesis space and over fitting (bias variance trade off)
+\item general approach to control complexity
+\begin{enumerate}
+    \item learn a sequence of models varying in complexity from the training data complexity $$F_1\subseteq F_2\cdots \subseteq F_n$$that is each model will expand the hypothesis space slightly 
+     we could do this for instance with $\mathcal{F}=\{$all polynomial functions  $ \}$ and then $\mathcal{F}_{d}=\{\text{all polynomials of degree}\leq d\}$
+    \item  then we select one model based on some score
+\end{enumerate}
+\subsection*{linear regression example}
+\item suppose the problem of picking the optimal number of linear features $\mathcal{F}_{d}=\{\text{a linear function using less than d features}\}$
+\item in this case we have $2^|d|$ possible combinations if d is the total number of features
+\item so this becomes a subset selection problem 
+\item we could do this in a \textcolor{red}{greedy forward method} that is start with an empty model with no features, then check every feature not yet in our model learn a with all features already in the model plus the new feature and check its score then. find the best scoring model and if it improves the best score of our model at last step add that parameter to the model and start over, otherwise end 
+\item that was a lot longer to write out in words than math 
+\section*{l1 and l2 regularization}
+\subsection*{complexity penalty}
+\item an objective with  a complexity penalty can be written as $$j(\theta)= \ell(\theta)+\lambda R(|\theta|)$$ where R is some regularization function that penalizes the model for the magnitude of the features and $\lambda $ is a regularization coefficient 
+\item \textcolor{yellow}{the constrained ERN} problem is thus given by$$min_{f\in \mathcal{F}}\frac{1}{n}\sum_{i=1}^{n}\ell(f_{\theta}(x_i), y_i)+\lambda R(\theta)$$
+\item \textcolor{red}{we prefer a smaller parameter  because if we push the estimated weights to be small re-estimating them on a new dataset would likely not cause a dramatic change (and thus the model is resistant to overfitting ) }
+\subsection*{l2 penalty}
+\item \textcolor{blue}{ridge regression} objective is given by $$j(\theta)= ||Xw||_{2}^{2}+\lambda||w||^2_{2}$$ where $||w||_{2}^{2}=w_{1}^2+...w^2_{d}$ is the square of the $\ell_{2}$ norm 
+\item can add an $\ell_{2}$ normalization penalty to other models as well
+\item if f(x)=$w^tx$ is Lipschitz continuous with Lipschitz constant  $L=||w||_{2}^{2}$ then when moving from $x$ to x+h is bounded by $L||h||=||w||_{2}||h||$
+\item $|f(x+h)-f(x)|=|w^t(x+h)-w^Tx|=|w^th|\leq ||w||_{2}||h||_2$ (this holds in general for any c norm)
+\item the point is lowering the norm of weights reduces the max rate our optimal function f can change at 
+\item ridgre regression closed form is always well defined because $(X^TX+\lambda I)$ is always invertible
+\item the $\ell_{1}$ or lasso objective can be defined analogously as $$j(\theta)=\theta^{t}w+\lambda|\theta|_{1}$$ where $||w||_1=\sum_{i}|w_i|$
+\item bellow is a graph of the regularization charts of ridge and lasso regression \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 10.01.41 PM.png}
+\item so first of all  keep in mind that a large value of  $||w_r||_{k}$ implies a low $\lambda$ so in ridge regression we reduce parameters based on how much changing them would effect square loss so will only lower a parameter until lowering another parameter reduces loss more 
+\item lasso on the other hand has constant reduction in loss from lowering a parameter regardless of it's value, so it will reduce one parameter at a time to zero 
+\item so lasso likes a spare solution 
+\item sparse solutions can be good for the following reasons 
+\begin{enumerate}
+    \item we do not that parameter in our prediction so computation becomes cheaper
+    \item it takes less memory to store our features 
+    \item it is easier to identify whcih features are really importnat when there are only  a few 
+    \item and hte prediction function may generalize better
+\end{enumerate}
+\subsection*{why does l1 regularization lead to sparse solutions}
+\item constrained erm $$\hat{w}=argmin_{||W||_1\leq r}||Xw-y||^2_{2}$$
+\item can also be written in terms of penalized erm in practice both are usually effective 
+\item so if we look at the constrained set for $\lambda=r$ constant in constrained erm we have 
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 10.13.39 PM.png}
+\item then we can compare this to the continuous of our objective\\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 10.15.28 PM.png}
+\item we can compare this with the lasso constrained erm \\\includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 10.18.06 PM.png}
+\item notice that the set of points that are more likely to be close to the corner of the square (ie spare lasso solution is quite large) as can be seen from this diagram 
+\\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 10.17.24 PM.png}
+\item we can compare this to constrained $\ell_{2}$ regularization and which will only chose the sparse solution in when the coefficient is already zero \\\includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 10.20.17 PM.png}
+\subsection*{minimizing the lasso objective}
+\item recall that we can write that our lasso objective $j(w)=||Xw-y||^2_2+\lambda||w||_1$
+is not differentiable 
+\item so we can deal with this in a number of ways 
+\item we can either use coordinate descent, linear programmings or projected stochastic gradient descent
+
 \end{itemize}
+
 \end{document}
