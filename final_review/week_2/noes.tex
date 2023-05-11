@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 2 gradient descent and loss functions}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{introduction}
+\begin{itemize}
+\item recall that in practice we are working with constrained erm where we are trying to minimize the risk given some loss function over a  hypothesis space
+\subsection*{gradient descent}
+\item here we assume that our gradient function is differentiable and our goal is to learn the parameter x such that $$x=argmin_{x\in \mathbb{R}^d}f(x)$$
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 8.19.53 PM.png}
+\item where $\eta\in \mathbb{R}$ is the step size hyper parameter
+\item for a fixed step this will eventually converge if the step size is small enough (but may take a long time )
+\item given the function is convex differentiable and Lipschitz continuous we can actually bound how long this converge will take. 
+\item when to stop gradient descent is an open question, one choice is to wait until the magnitude of the gradient is below a certain threshold, 
+\item \textcolor{red}{early stopping } is another method which after each iteration evaluates the validation error and stops when the validation error starts to increase
+\item doing gradient descent for constrained erm at every iteration we need to compute the sum of the gradients of our loss function with respect to our weights over the whole training set this can take a long time for large training sets so at every step we make n computations so if we do i iterations then full batch gradient descent is $O(ni)$ which does not scale  
+\subsection*{stochastic gradient descent}
+\item \textcolor{red}{mini batch gradient descent} given a random subsample of the training data (called a mini batch) $((x_1,y_1)\cdots (x_n,y_n))$ the mini batch gradient is $$\nabla \hat{R}_{n}(w)=\frac{1}{n}\sum_{i=1}^{n}\nabla_{w}\ell(f_w(x_{m_i}, y_{m_i})$$
+that is at every step we just take a random subsample of the dataset and use the gradient of that as an estimate of the true gradient
+\item stochastic methods work well far away from an optima (they get close to an optima quickly) but they have trouble converging (full batch gradient descent has the opposite short comings)
+\item minibatch gradient is an unbiased and consistent estimate of the gradient
+\item can get better performance in minibatch gradient descent with a diminishing step size 
+\item \textcolor{purple}{stochastic gradient descent} is just gradient descent with a batch size of 1, it is super common 
+\item witch works best depends on the problem and how much error you are ok with in your estimator  
+\subsection*{regression loss functions}
+\item in a regression problem we are predicting a continuous output output value $y$ which for the sake of this we can assume to be a scaler
+\item \textcolor{orange}{the residual} $r=w^tx_i-y=\hat{y}-y$ ie the difference between our prediction and the observed outcome 
+\item a loss function is distance based if 
+\begin{enumerate}
+    \item it only depends on the residual ie $\ell(r)$
+    \item it is zero when the residual is zero ie $r=0\iff \ell(r)=0$
+ 
+\end{enumerate}
+\item distance based loss functions are translation invariant 
+\item \textcolor{orange}{square or $\ell_{2}$ loss is fiven by $\ell(r)=r^2$}
+\item \textcolor{purple}{absolute loss is given by $\ell(r)=|r|$}
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 8.41.51 PM.png} 
+\item note that the absolute loss is translation invariant that is it weights errors the same regardless of where they are made 
+\item the square loss is weights errors by how far they are away from being correct 
+\item so we call the absolute loss robust to outliers since a learned parameter will shift more due to an outlier in  l2 loss than l1 loss
+\item note an issue with absolute loss is that it is not differentiable
+\subsection*{classification loss functions}
+\item in classification we are predicting one from a set of discrete quantities for now we can just consider binary classification
+\item we have \textcolor{orange}{the score function $f(x)=w^tx$ } which represents how much confidence we have in our classification prediction
+\item \textcolor{red}{the margin is given by $m=y\hat{y}=yf(x)$ if $y\in \{0,1\}$}
+\item the margin is a measure of how correct we are so we want to maximize the margin of our estimator
+\item \textcolor{red}{zero one loss} is given by $$\ell(f(x_i), y)=\mathbb{I}(f(x)\neq y)$$ note that this problem is non convex and non differentiable
+\item \textcolor{red}{hinge loss} is given by $$\ell_{hinge}=max(1-m,0)$$ so the loss is linear if our margin is less than one (ie we made the right classification) and zero otherwise 
+\item \textcolor{red}{logistic loss } is given by $$\ell_{logistic}=log(1+e^{-m})$$ itt exponentially decays after 0
+\item \textcolor{red}{classification square loss} is given by $$\ell(f(x),y)=(1-m)^2$$ this heavily punishes misclassified examples
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-10 at 8.56.09 PM.png}
+\end{itemize}
+\end{document}
