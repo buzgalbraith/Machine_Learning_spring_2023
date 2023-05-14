@@ -1,0 +1,126 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{week 8: Bayesian models}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{frequentest stats}
+\begin{itemize}
+\item \textcolor{blue}{parametric family} is a set such that $$p(y|\theta):\theta\in \Theta$$ where y is our sample space, $\theta$ is our parameter and $\Theta$ is our parameter space 
+\item in this model we assume that there is a true data generating process given by $P(y|\theta)$ for some $\theta\in \Theta$
+\item if we knew the correct $\theta$ there would be know need to statics
+\item however we are only able to view an iid smaple of our data from the data generating process $P(y|\theta)$
+\item \textcolor{blue}{a statistic} $s=s(\mathcal{D})$ is any function of our data 
+\item a statistic $\hat{\theta}=\hat{\theta}(\mathcal{D}):\theta\in \Theta$ is a \textcolor{blue}{point estimator} of $\theta$ that is an estimate of some parameter that we are using for estimation
+\item ideal point estimates are unbiased, consistent and efficient (ie could not get a better point estimate from the data)
+\item MLE is consistent and efficient under some assumptions 
+\subsection*{coin flip}
+\item our parametric family are Bernoulli random variables with parameter $\theta\in (0,1)$
+\item MLE on this is fairly straight forward $$L_{\mathcal{D}}(\theta)=P(y|x,\theta)=\theta^{n+h}(1-\theta)^{n_y}$$
+\item then we can max the log likelihood $$\theta_{mle}=argmax_{\theta}(n_hlog(\theta)+n_tlog(1-\theta))$$
+\item $$\nabla_{\theta}=\frac{nh}{\theta}-\frac{n_t}{1-\theta}\Rightarrow \theta_{mle}=\frac{n_h}{n_h+n_t}$$
+\item so as we would expect the mle estimate for coin flipping is the \% of tails in the dataset 
+\section*{Bayesian stats}
+\item bayesian models a parametric family family of distribution to model the $y|x,\theta$ as well as a prior distribution $P(\theta)$
+\item putting the pieces together we get the joint density on $\theta$ and $\mathcal{D}$ $$P(\mathcal{D},\theta)=P(\mathcal{D}|\theta)P(\theta)$$
+\item \textcolor{blue}{the posterior} for $theta$ is $P(\theta|\mathcal{D})$ the posterior is how we rationally update our beliefs
+\item note that $P(\theta|\mathcal{D})=\frac{P(\mathcal
+D|\theta)P(\theta)}{P(\mathcal{D})}\propto P(\mathcal{D})P(\theta)$ so that is your posterior is proprtional to the product of the likckyhood of the data and the prior  
+\item so for the purposes of learning we are trying to find $\theta=argmax_{\theta}P(\theta|\mathcal{D})$ and we do this by looking at our likelihood function and prior
+\item so keep in mind that we are reasoning about not just the probaility of our outcomes y, but also the likelyhood of our parameter 
+\subsection*{coin flipping example}
+\item lets model a bayesian coin flip 
+\item we can chose our parametric family to be  $P(y|\theta)=\theta$ ie a bernoulli
+\item \textcolor{red}{beta prior} a prior is beta distributed if $$\theta\sim Beta(\alpha, \beta)$$ $$P(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}$$
+\item the shape of these can vary a lot 
+\item proving it is pretty involved by $E[\theta]=\frac{\alpha}{\alpha+\beta}$
+\item the mode of beta is $argmax_{\theta}P(\theta)=\frac{\alpha-1}{\alpha+\beta-2}$
+\item so with this we can calculate our posterior $P(\theta|\mathcal{D})\propto P(\theta)P(\mathcal{D}|\theta)\propto \theta^{h-1}(1-\theta)^{t-1}\times \theta^{nh}(1-\theta)^{nt}=\theta^{h-1+n_h}(1-\theta)^{t-1+n_t}$
+\item note here that our posterior is beta distributed
+\item think of this as our prior being intial examples that are as we would expect them to be and then we start viewing furhter examples
+\subsection*{conjugate prior}
+\item let $\pi$ be a family of prior distributions on $\Theta$
+\item let $P$ be a parametric family of distributions with parameter space $\Theta$
+\item a family of distributions $\pi$ is  \textcolor{blue}{conjugate to} parametric model P if for any prior in  $\pi$ the posterior is always in $\pi$
+\item the beta family is conjugate to the bernoulli family of parametric distributions
+\item the real point of doing bayesian methods is that at the end we have a distribution of parameters $P(\theta|D)$ on which to evaluate $P(D|\theta)$ instead of just a single estimate as we get with frequentest models
+\subsection*{bayesian point estimates}
+\item we have the posterior distributions $\theta|\mathcal{D}$
+\item how do we get a point estimate $\hat{\theta}$ from this? 
+\item that is a choice common options are a posterior mean $\hat{\theta}=E[\theta|\mathcal{D}]$ 
+\item or Max a posterior estimate $\hat{\theta}=argmax_{\theta}P(\theta|\mathcal{D})$ this is the mode of the posterior
+\subsection*{what else can we do with a posterior}
+\item we can quantity uncertainty about our estimate
+\item get a 95\% credible set 
+\item select a point estimate using bayesian decision theory, where we chose a loss function adn then minimize expected risk with respect to the posterior
+\section*{Bayesian decision there}
+\subsection*{intro}
+\item we need the following ingredients 
+\begin{enumerate}
+    \item a parameter space $\Theta$
+    \item a prior distributions $P(\theta)\in \Theta$
+    \item an action space A
+    \item a loss function $\ell:A\times \Theta \rightarrow \mathbb{R}$
+\end{enumerate}
+\item we define the \textcolor{blue}{posterior risk} for an action $a\in A$ as $$r(a)=E[\ell(\theta,a)|\mathcal{D}]=\int\ell(\theta, a)P(\theta|D)d\theta$$ so this is a weighted averge loss of our action over all values of $\theta\in \Theta$
+\item this is a lot more robust than just choiring a single theta
+\item a bayes action $a^{*}$ is an action that minimizes posterior risk $$r(a^{\theta})=min_{a\in A}r(a)$$ ie the best possible action in terms of exited loss under the posterior
+\item \textcolor{blue}{squared loss} $\ell(\hat{\theta}, \theta)=(\theta-\hat{\theta})^{2}\rightarrow $ (PICK the value that is clostest to all others in $\ell_{2}$ space ie the mean )
+\item zero one loss $\ell(\theta, \hat{\theta})=\mathbb{I}(\theta\neq \hat{\theta})$ posterior mode (pick the value that equals the most other values ie the mode)
+\item \textcolor{red}{absolute loss} $\ell(\hat{\theta}, \theta)=|\theta- \hat{\theta}|$ posterior medan 
+\subsection*{recap and interpretation}
+\item the prior represents beliefs about $\theta$ before observing the data 
+\item the posterior represents how we rationally update these bellies after seeing $\theta$ 
+\item all interfaces and actions are based on the posterior distribution
+\section*{bayesian conditional models}
+\item we need an input and outcome space (X,Y) 
+\item a well as a parametric family of distributions to base our likelihood function off of $$\{P(y|x,\theta):\theta\in \Theta\}$$
+\item as well as a prior $P(\theta)$  
+\item what point estimate we use depends on our prior
+\item so in modeling our goal is to find a functor that takes X and produces \textbf{a distribution} on our output space
+\item in the frequentest approach 
+\begin{enumerate}
+    \item we chose a family conditional probability density
+    \item select one estimate from among them using mle 
+\end{enumerate}
+\item in bayesian methods 
+\begin{enumerate}
+    \item we chose a parametric family of conditional densities $$\{P(y|x,\theta):\theta\in \Theta\}$$
+    \item as we as a prior distribution $P(\theta)$
+\end{enumerate}
+\item in this context we do not need to make a discrete prediction of $\theta$ from our hypothsis space we can maintain uncertainty
+\subsection*{prior predictive distribution}
+\item suppose we have not yet seen any data 
+\item in the bayesian setting we can still produce a prediction function using the \textcolor{blue}{prior predictive function} $$x\rightarrow P(y|x)= \int P(Y|x,\theta)P(\theta)d\theta$$ this is an averge on all conditional densities in our family weighted by the prior
+\subsection*{bayesian vs frequentest approach}
+\item in bayesian stats we have two distributions on $\Theta$
+\item te prior distribution $P(\theta)$ as well as the posterior $P(\theta|D)$
+\item in the frequentest approach we chose a point estimate $\hat{\theta}\in \Theta$ and predict $$P(y|x, \hat{\theta}(D))$$
+\item in the bayesian approach we integrate over out over $\Theta$ wrt $P(\theta|\mathcal{D})$ and predict with $$P(y|x,\mathcal{D})=\int P(y|x,\theta)P(\theta|\mathcal{D})d\theta$$  so this is a distribution of our outcomes over our parameter space 
+\item once we have a predictive distribution $P(y|x,\mathcal{D})$ it is easy to generate a single point depending on the loss function we are using 
+\section*{gaussian regression example}
+\subsection*{1 dimensional example}
+\item let our input space be discrete $X=[-1,1]$ and our output space be $y\in \mathbb{R}$
+\item given x $y=w_{0}w_{1}x+\epsilon$ where $$\epsilon\sim\mathcal{N}(0,.2^{2}) \iff y|x,w_0,w_1 \sim \mathcal{N}(w_0+w_1x,.2^{2}) $$
+\item we know that $w\in \mathbb{R}^{2}\iff \Theta=\mathbb{R}^2$ is our parameter space
+\item let our prior distribution be $w=(w_0,w_1)\sim \mathcal(0, \frac{1}{2}I)$ (so they are a gaussian random vector centered at zero)
+\item our prior is a mean 0 centerd gaussian random variole with a symetric covariance matrix so teh joint pdf of the our prior has perfectly circular contour lines, if this were ture we would expect to see data liek this that follows no real pattern \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 3.26.41 AM.png}
+\item then as we get more observations, they can over power our prior, and if tehy have a trent our pmd will shift away from teh prior
+\section*{gaussian regression closed form }
+\item to recap our model is $$w\sim \mathcal{N}(0,\Sigma_{0})$$ and $$y_i|x,w \sim \mathcal{N}(w^{t}x_i, \sigma^{2})$$
+\item our posterior is also gaussian $$w|\mathcal{D}\sim \mathcal{N}(\mu_{D}, \Sigma_{D})$$
+\item this closed form can lead to either linear or ridge regression depending on the from of our covariance matrix  
+\end{itemize} 
+\end{document}

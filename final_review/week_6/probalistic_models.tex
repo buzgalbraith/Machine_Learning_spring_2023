@@ -1,0 +1,144 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 6 probabilistic models }
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+\maketitle
+\section{overview}
+\begin{itemize}
+\item if we learn models as a statistical inference, we have both a unified frame work that covers many classes of models 
+\item  and a  principled way to incorporate prior beliefs about the data into the model 
+\item this can either be done by learning conditional models or generative models
+\section*{conditional models}
+\subsection*{linear regression}
+\item given training data $\mathcal{D}=((x_1,y_1)\cdots (x_n.y_n))$
+\item we want to learn a parameter $\theta \in mathbb{r}^{d}$ and predict y as $$h(x)=\sum_{i=1}^{n}\theta_ix_i= \theta^{t}x$$
+\item we cna add the bias term by setting $x_0=1$ (that is we add a term to each data vector which is constant )
+\item we can minimize squared loss over this method $$j(\theta)=\frac{1}{n}\sum_{n=1}^{N}(y^n\theta^{t}x^n)^2=(X\theta-y)^{t}(X\theta-y)$$ 
+\item this has a closed form  $\hat{\theta}= (X^tX)^{-1}X^ty=\Sigma_{x}X^{t}y=\Sigma_{X}P_{X}(y)$ if x is normalized 
+\subsection*{assumptions of linear regression}
+\item we assume that x and y are linearly related ie $y=\theta^{t}x+\epsilon$ where $\epsilon$ is our residual error (or noise )
+\item we assume that the error is iid and $$\epsilon\sim\mathcal{N}(0,\sigma^{2})$$  
+\item so then what is the distribution of $\tilde{y}|\Tilde{x}=x$? if X is held constant, than $\Tilde{y}|\tilde{x}=x$ only depends on the noise and thus $$P(\Tilde{y}=y|\tilde{x}=x,\tilde{\theta}= \theta)\sim \mathcal{N}(\theta^{T}x, \sigma^{2})$$ 
+\item the notation  $P(y|x;\theta)$ can be though of as the likelihood of y (ie a certain outcome) given our input data x is fixed and $\theta$ ie our model parameter is true 
+\item so, each point that we are predicting for is a gaussian random variable. 
+\item \textcolor{blue}{the maximum likelihood principle} says that we would like to max the conditional likelihood of our data  that is $$\mathcal{L}(\theta)=P(D, \theta)=\Pi_{n=1}^{n}P(\Tilde{y}^n=y|\Tilde{x}^n=x, \Tilde{\theta} =\theta )=\Pi_{n=1}^{N}P(y^n|x^n, \theta)$$
+\item in practice we work with the log likelihood since it is more stable(sine the product of many probabilities will be very small ) 
+\subsection*{mle and linear regression}
+\item for the sake of time at this point i am just going to include pictures of derivations that i think are kinda clear
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-13 at 4.57.32 PM.png}
+\item so by the assumptions of linear regression that is our log likelihood function 
+\item now we want to maximize it so we can see $$\nabla \ell_{\theta}(\theta)=-\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(y^n-\theta^tx^n)x^n=-\frac{1}{\sigma^{2}}(X^ty-\theta^tXX^{t})\Rightarrow \theta^{*}=(XX^t)^{-1}(X^ty)$$
+\item so in other words probabilistic linear regression yields the same closed form as that obtained through erm with squared loss 
+\item however assuming that noise is gaussian is not always reasonable as is the case in classification 
+\item so we are going to build logistic regression
+\section*{logistic regression}
+\item consider a binary classification problem where $y\in \{0,1\}$ what should the distribution of $\Tilde{y}|\Tilde{x}=x$ look likelihood
+\item perhapses a bernoulli with parameter $\theta=h(x)$ ie  $$P(y|x)=h(x)^{y}(1-h(x))^{1-y}$$ so note here if $y=0$ then $P(y=0|x)=(1-h(x))=h(x)^{1}(1-h(x))^{0}=h(x)^{1}(1-h(x))^{1-1}=h(x)^{1}(1-h(x))^{1-y}$
+\item so how can we learn $h(x)$? we know that $h(x)\in (0,1)$ as it is a probability
+\item recall that the linear problem with gaussian noise $$E[\tilde{y}|\Tilde{x}=1, \theta]=\theta^{t}x=h(x)$$ so this has the mean we want, so lets just find a function that maps this linear predictor to (0,1) and use that as a probability
+\item enter the \textcolor{blue}{logistic function} $$f(\eta)=\frac{1}{1+e^{-\eta}}$$ \includegraphics*[width=10cm]{images/Screenshot 2023-05-13 at 5.20.46 PM.png}
+\item so we let $$P(\Tilde{y}|\Tilde{x}=\Tilde{x})\sim bernoulli(logistic(\theta^{t}x))$$ 
+\item so in other words for each point data point, we think of the outcome of that data point as a bernoulli random variable with some fixed parameter which is the normalized (though the logistic function) mean of our gaussian linear regression problem ie $\theta^{t}x$
+\item  $P(y|x)=$Bernoulli$f(\theta^tx)$
+\begin{itemize}
+    \item look at the log odds $log(\frac{P(y=1|x)}{P(y=0|x)})=\theta^Tx$ 
+    \item this can be expressed as $log(P(y=1|x))-log(p(y=0|x)$
+    \item recall that we can write $P(y|x)=P(y|x)=h(x)^y(1-h(x))^{1-y}$ 
+    \item so thus we have $ log(\frac{P(y=1|x)}{P(y=0|x)})=\theta^Tx=log(P(y=1|x))-log(p(y=0|x)=log(f(x)^1(1-h(x))^{1-1})-log(f(x)^(0)(1-h(x))^{1-0})=log(f(x))-log(1-f(x))=log(\frac{1}{1+e^{-\eta}})-log(1-\frac{1}{1+e^{-\eta}})=log(1)-log(1+e^{-\eta})-log(\frac{1+\eta^-n-1}{1+\eta^-n}=log(1+e^{-\eta})-log(\frac{e^-\eta}{1+e^{-\eta}}=log(1+e^{-\eta})-log(e^{-\eta})+log(1+e^{-\eta})=-log(e^{-\eta})=\eta=\theta^tx$
+    \item so in other words the log odds are a linear function that form a decision boundary, that is a linear decision boundary
+    \item this means the decision boundary is linear, ie the features are linear in the parameter as we increase the value of $\theta^tx$ we get 1, and as we decrees it we get zero
+    
+\end{itemize}
+\item so lets find the gradient and MLE 
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-13 at 6.06.09 PM.png}
+\item with some pretty straight forward calc we see this. there are more details on this in my full lecture notes 
+\item notice that in both formulas we had a pretty similar gradient 
+\item this is a more general property of liner models as will see
+\subsection*{linear vs logistic regression}
+\item linear regression
+\begin{enumerate}
+    \item we combine the inputs as a linear combination or weighted sum ie $\theta^{t}$
+    \item we output $y\in \mathbb{R}$
+    \item $\Tilde{y}|\tilde{x}=x, \theta\sim \mathcal{N}(\theta^{t}x, \sigma^{2})$
+    \item our transfer function  (ie how we transfer or map the linear combination to a prediction) is the identity map ie $f(\theta^{t}x)=\theta^{t}x$ 
+    \item the mean of our conditional distribution is $E[\Tilde{y}|\Tilde{x}=x, \theta]=\theta^{t}x=f(\theta^{t}x)$ (where f is our transfer function)
+\end{enumerate}
+\item logistic regression
+\begin{enumerate}
+    \item we take a linear combination of te inputs $\theta^{t}x$
+    \item our out put is categorical (as this is a classification problem)
+    \item our conditional distribution $\Tilde{y}|\Tilde{x}=x, \theta \sim Bernoulli(f(\theta^{t}x))$
+    \item our \textcolor{blue}{transfer function} ie how we map our linear function to our prediction function is the logistic function $f(\theta^{t}x)=\frac{1}{1+e^{-\theta^{t}x}}$
+    \item the mean of our conditional distribution is $E[\Tilde{y}|\Tilde{x}=x,\theta]=1(P(y=1|\theta^{t}x))+(0)(1-P(Y=1|\theta^{t}x))=P(Y=1|x,\theta)=f(\theta^{t}x)$ 
+\end{enumerate}
+\item in both cases x enters through a linear function 
+\item the mean difference between the two is due to there conditional distributions
+\item can we generalize this?
+\subsection*{generalized regression model}
+\item our task is given some x find the distribution of y conditional on that ie $P(\Tilde{y}|\tilde{x}=x)$
+\item to model this,
+\begin{enumerate}
+    \item  \textcolor{blue}{chose a parametric family of distributions} $p(y|x,\theta)$ with a parameter $\theta\in\Theta $
+    \item chose a  \textcolor{blue}{transfer function} that maps a linear predictor in $\mathbb{R}$ to $\Theta$ ie $$x\in \mathbb{R}^{d}\rightarrow w^{t}x\in \mathbb{R}\rightarrow f(w^{t}x)=\theta\in \Theta$$
+\end{enumerate}
+\item the finally we learn $\hat{\theta}\in {argmax}_{\theta}log(P(\mathcal{D}|\theta))$
+\subsection*{poisson regression example}
+\item the  Poisson distribution is a discrete probability distribution used to model the number of events during a fixed time period has parameter $\lambda$ and pdf $$P(\tilde{y}=k|\lambda)=\frac{\lambda ^{k}e^{-\lambda}}{k!}$$ where $\lambda <0, E[Y]=\lambda$
+\item suppose that we chose our parametric distribution of families to be poisson that is assume $\Tilde{y}|\Tilde{x}=x,\eta\sim poisson(\eta)$
+\item so how can we think about our transfer function? $$x\rightarrow w^{t}x\in \mathbb{R}\rightarrow f(w^{t}x)=\lambda\in(0,\infty)$$
+\item if we are mapping from $\mathbb{R}\rightarrow (0,\infty)$ it is  a common choice to let $f(x)=e^{x}$
+\item all right so lets derive the mle for this type of variable $$\mathcal{L}(D|\theta)=\Pi_{n=1}^{n}P(Y^{n}|\lambda^{n})=\Pi_{i=1}^{n}\frac{(\lambda^{n})^{y^n}e^{-\lambda^{n}}}{(y^n)!}$$
+\item meaning that $$\ell=\sum_{n=1}^{n}y^nlog(\lambda)-\lambda^{n}-log((y^{n})!)=\sum_{n=1}^{n}y^nlog(e^{w^{t}x^{n}})e^{-w^{t}x^n}-log((y^{n})!)$$ where $\lambda^{n}=e^{w^{t}x^{n}}$
+\item then we can find our gradient as $$\nabla \ell_{w}=\sum(\frac{y^{n}}{e^{w^t x^n}}-1)(e^{w^tx^n}x^n )$$
+\subsection*{ multinomial logistic regression}
+\item we are going from a bernoulli distribution to a categorical in that case 
+\item so we can say $$\tilde{y}=y|\tilde{x}=x,\theta\sim categorical(\theta):\quad \theta\in \mathbb{R}^{d}, \sum\theta=1, \theta_i\leq0 \quad\forall i\in [1,k]$$ and we can think of $\theta_i=P(y=i|x,\theta)$ that is each element in $\theta$ is the likelihood an example given it's inputs is class that class 
+\item for each x we compute a linear score function for each class  that is $$x\rightarrow (w_1^tx,\cdots , w_k^tx)\in \mathbb{R}^{k}$$ that is for a given x we can compute a dot product between that input and each classes weight vector to get (what equates to the similarly between the two) 
+\item \textcolor{blue}{the soft max function} is the our transfer function mapping our k scores to a probability vector $\theta\in\mathbb{R}^{d}$ which sums to 1.  $$(s_1 \cdots s_k)\rightarrow \theta=(\frac{e^{s_1}}{\sum_{i=1}^{k}e^{s_i}}\cdots \frac{e^{s_k}}{\sum_{i=1}^{k}e^{s_i}} )$$
+\item so further $$p(y=c|x,w)=\frac{e^{w_{y}^tx}}{\sum_{i=1}^{k}e^{w_{i}^{t}x}}$$
+\item this can be thought of as learning k linear regression models, then passing them through this transfer function to normalize each model and predict based on which is most likely 
+\subsection*{review}
+\item Recipe for conditional distribution for prediction
+\begin{enumerate}
+    \item define input and outputs space 
+    \item chose the output distribution $P(y|x,\theta)$ could be conditional, could be bernoulli, could be gaussian etc 
+    \item chose a transfer function that maps $w^{t}x$ to the parameter space of that parametric distribution $\Theta$
+\end{enumerate}
+\item then to learn the model fit a maximum likelihood estimator to the data 
+\section*{generative models}
+\subsection*{bayes rule}
+\item our goal is to learn the joint distribution $$P(x,y|\theta)$$ 
+\item then predict the label for x as $$argmax_{y\in Y}P(x,y|\theta)$$
+\item so in conditional models we learn $P(y|x,\theta)$ that what is the distribution of y given we hold x and $\theta$ constant where as in generative models we are learning $P(x,y|\theta)$ so we are learning how x and y are disputed together under the assumption of there being some true parameter $\theta$
+\item we train as $$P(x,y)=P(x|y)P(y)$$ that is we learn the joint distribution of x and y by modeling as the product of two distributions
+\item then we test by writing $$argmax_{y}P(y|x)=argmax_{y}\frac{p(x|y)P(y)}{P(x)}=argmax_y P(x|y)P(y)$$ so that is we predict using the most likely class according to out model.
+\subsection*{naive bayes}
+\item suppose we want to label an email as real or spam 
+\item let our input space be all possible emails and let $x\in X$ be an email where $x_i\in [0,1]$ represents if the ith word in some dictionary is in that email 
+\item so what is the probability of a given document x? $$P(x)=\prod_{y\in Y}P(x,y)=\prod_{y\in Y}P(x|y)P(y)$$
+\item then what is the likelihood of of one document given a class $$P(x|y)=P(x_1\cdots x_d|y)=P(x_1|y)P(x_2|y,x_1)\cdots P(x_d|y, x_1 \cdots x_{d-1})=\prod_{i=1}^{d}P(x_i|y,x_{<i})$$
+\item this problem has a tone of dependencies but 
+\item to deal with this we have \textcolor{blue}{the naive bayes assumption} which says that features are conditionally independint of one another given the label and thus $$P(x|y)=\prod_{i=1}^{d}P(x_i|y)$$
+\item assume  that  $P(x_i=1|y=1)=\theta_{i,1}, P(x_i=1|y=0)=\theta_{i,0}$ so for each example we are learning 2 (but really one parameter)
+\item and $P(y=1)=\theta_{1}$
+\item so we can write $$P(x,y)=P(x|y)P(y)=p(y)\prod_{i=1}^{d}P(x_i|y)=p(y)\prod_{i=1}^{d}(\theta_{i,y}\mathbb{I}(x_i=1)+(1-\theta_{i,y}\mathbb{I}(x_i=0)))$$
+\item so here we max the licklyhood of the data $\prod_{i=1}^{n}p_{\theta}(x^{n}, y^{n})$ so we are maximizing the licklyhood of our overall data not just of the conditional likelihood of seeing y
+\item  \includegraphics*[width=10cm]{images/Screenshot 2023-05-13 at 9.57.35 PM.png}
+\item so i think the thing to keep in mind here is that $y_{i}=1, x_{i}=1$ mean difference things. $y_i=1$ means that the email is span $x_{i}=1$ means the word is present
+\item this is actually a pretty simple weighted sum of number of observations as our derivative
+\item solving this out we see $$P(x_i|y)=\theta_{j,1}=\sum_{i=1}^{n}\frac{\mathbb{I}(y^{n}=1\land x_{j}^n=1)}{\mathbb{I}(y^{n}=1)}=\frac{\text{number of spam reviews with the word }}{\text{number of spam reviews}}$$
+\item we can expand the naive bayes model to continuous outputs  by setting our conditional probability of x given y as $P(x_{i}|y=k)\sim\mathcal{N}(\mu_{i,k}, \sigma_{i,k}^{2})$
+\item the math and interpretation are largely the same though 
+\end{itemize}
+\end{document}

@@ -1,0 +1,192 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 8 Multiclass classification }
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section*{reduction to binary classification}
+\subsection*{One vs all/ one vs rest }
+\begin{itemize}
+\item setting input space $X$, outputs space $y=\{1 \cdots k\}$
+\item we want to train k binary classifiers one for each class $$h_1\cdots h_k: X\rightarrow \mathbb{R}$$ that is we are going to train k classifiers to take input sand produce real numbers 
+\item  each classifier will distinguish class $i=1$ from the rest $-1$
+\item then we can predict using a majority vote $$h(x)=argmax_{y\in Y}h(x)$$
+\item one versus all does not have to be linear necessarily
+\subsection*{all versus all, one vs one, all pairs }
+\item input space X, output space $Y=\{\cdots k\}$
+\item we train l chose 2 binary classifiers one for each $i\in [1,k], j\in [i+1,k]$
+\item classifier $h_{i,j}$ finds $P(y=i)$ as class 1 and inverse as -1
+\item predict using a majority vote $$h(x)=argmax_{i\in (1\cdots k)}\sum_{(j\neq k )}h_{i,j}\mathbb{I}(i<j)-h_{i,j}\mathbb{I}(j<i)$$
+\subsection*{four class example}
+\item consider the following dataset \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 3.13.35 PM.png}
+\item assume that each pair of classes is linerly sperable in the linear ava model 
+\subsection*{ava vs OVA}
+\item AVA grows quadratically in the number iof classifers we need to train where as one versus all frows liniearly
+when training one versus all each classfier needs to train on total number of data point's (that is total data is marked for every class)
+when training all vs all each class is nly consdierd when the data that deal with it is on one of the two classes so we are dealing with $\frac{n}{k}$ training points for each of the two classes
+\item these lack theoretical strenght but are simple and work well in practice
+\item one vs all can have real class imballance issues 
+\item ava has small training sets 
+\item so caleberation is an issue for btoh models 
+\item we do not likely abritary tie breaks 
+\subsection*{code word for labels}
+\item we can encode labels as binary classes and predict the bits directly 
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 3.23.05 PM.png} 
+\item so we can represent four classes in ova like the above this using 1 bit per class, how can we reduce this number?
+\item each bit length can fit $2^{k}$ classes at max 
+\item so suppose we have 6 classes we are representing in 6 bits
+\item so that is $Y\in \{c_1\cdots c_8\}$ then we find some bit representation of $Y$ call it $B=\{0,1\}^{6}$ and we are learning 6 binary classifiers $h_1\cdots h_6:X\rightarrow \{-1,1\}$ 
+\item such that $$h_{i}(x)=P(\text{bit}_i=1)$$ in the binary representation 
+\item predict the closest label in terms of hamming distance  
+
+\subsection*{error correcting output codes:summary}
+\item this si more efficient than OVA
+\item but want to ballance number of bits (ie compression) and robustness. the fewer bits we use less bit combinations there are that do not correspond to a class, meaning we can recover form fewer of our binary classifiers making mistakes than we other wise could
+\subsection*{review}
+\item it is unclear how to generalize this to massive number of classes like image classification
+\subsection*{multi class loss}
+\subsection*{binary logistic regression}
+\item the task is given an input x we would like to output a classification between (0,1). we do this with a linear model with transformation function  $$P(X=1)=f(x)=sigmoid(X)=\frac{1}{1+e^{-z}}=\frac{1}{1+e^{-w^{t}x-b}}$$
+\item the other class is represented as $$P(y=-1|x,w)=1-f(x)=sigmoid(-z)$$
+\item so we are implicitly learning parameters for two classes $w,b$ and $-w,-b$ (the second class is fully determined by the first in this case though )
+\section*{multiclass logistic}
+\item we can expand this with the softmax function where we learn $w_i\quad \forall i\in[1,c]$ and predict $$P(y=c|x,w)=\frac{e^{w_{c}^{t}x+b_c}}{\sum_{c}w^t_cx+b_c}$$
+\item the loss function here is given by $$L=\sum_{i}-y_{c}^{i}log(f_{c}(x^{i}))$$ this is more or less the sum of our negative likelihood times our true class label 
+\subsection*{compare this to one versus all}
+\item this holds for both multiclass and ova
+\item our base hypothesis space are the linear combinations or score functions $\mathcal{H}=\{h:X\rightarrow \mathbb{R}\}$ so this of this as how we make a single predictor
+\item our multi class hypothesis space for k classes is given by $$\mathcal{F}=\{ x\rightarrow argmax_{i}h_{i}(x)|h_1\cdots h_{k}\in \mathcal{H}\}$$ so that is we make our multiclass class prediction as a argmax of our score function that is we pick the most likely class 
+\item  ova objective $h_{i}(x)>0$ for x with label i and $h_{i}(x)<x$ for x with all other labl 
+\item then at test time to predict $(x,i)$ correctly we need $$h_{i}(x)>h_{j}(x)\quad \forall j\neq i$$
+\subsection*{multiclass perceptron }
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 3.54.19 PM.png}
+\item so here we are using a base linear predictor
+\item we initialize our hyperplanes at the origin  (think of each $w_i$ as defining a hyperplane) so then we are learning a set of hyplanes that can be stacked in a matrix as $W\in \mathbb{R}^{k\times d}$
+\item then for some number of iterations 
+\item for all points in the dataset we set our predicted class as the class with highest score 
+\item if we are wrong, then we move the $w_y$ in the direction of the scorer. 
+\subsection*{re-write the score }
+\item if we want this to scale we want to reduce W to a single vector w 
+\item we can do a feature transformation $$w_{i}^{t}x=w^{t}\phi(x,i)$$ $$h_i(x)=h(x,i)$$
+\item so the logic here is we are going to encode the labels in the feature space it's self 
+\item so think of the score $w^tx=w^{t}\phi(x,i)$ as the compatibility for a label and input (this makes sense since we are taking an inner product)
+\item how do we form $\phi$
+\item we can flatten the matrix $w\in \mathbb{R}^{k\times D}$ that is $$W=\begin{pmatrix}
+    w{1,1}&\cdots& w_{1,d}\\
+    \cdots &\cdots &\cdots \\
+    w{n,1}&\cdots& w_{n,d}\\
+\end{pmatrix}\Rightarrow w=(w_{1,1}\cdots w_{1,d}, w_{2,1}\cdots w_{n,d})\in \mathbb{R}^{n*d}$$
+\item then we define $\phi:\mathbb{R}^{d}\times \{1\cdots k\}\rightarrow \mathbb{R}^{n*d}$
+such that $$\phi(x,1):=(x_1\cdots x_d,0 \cdots 0)$$ and $$\phi({x,i}):=(0,0\cdots x_{1}\cdots x_{d}\cdots 0 )$$
+\item so kind of think of $\phi$ as mapping x with something like bassi vectors for this new space 
+\item also note that $w^{t}\phi(x,i)$ will be zeroes for all ellemets not corresponding to the class we are looking at so it is an orthoginal projection more or less
+\subsection*{re-write multiclass perceptron}
+\includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 4.09.57 PM.png}
+\item that looks the same as before but it is conceptually distinct
+\item we initialize $w\in \mathbb{R}^{k\times d}$ as all zeros 
+\item then for some number of iterations for all data points
+\item define our prediction as $\hat{y}=argmax_{y'\in y}w^{t}\phi(x,y')$ so we are taking the class that is most close to the x projected onto the bassis vecotr of the class space 
+\item then if we got it wrong we move our hyperplane in teh direction of $\phi(x,y)$ which is the projection of x onto that bassis in the w space 
+\item and away from the class we got wrong 
+\item what is the base binary classification problem in multiclass perceptron i mean we define $w\in \mathbb{R}^{k\times 2}$ make a feature map $\phi(x,i)$ which projects onto the classes in the same way 
+\item i think it fits the frame work with out much change at all 
+\subsection*{features }
+\item for now let our running example be part of speech classification
+\item $X=\{\text{all words}\}$, $Y=\{\text{noun, verb,adj...}\}$
+\item the features (that is what ) $x_i\in x\in X$ represent could be the word, what the word ends with etc 
+\item note that  $w\in\mathbb{R}^{d*K}$ (ie a weight vector) as we did above does not scale here, since both d and i are really large 
+\item we could directly design features for each that is $$\phi(x,y)=(\phi_1(x,y)\cdots \phi_{d}(x,y))$$ 
+\item so for example suppose our input is $x=$ the boy grabbed the apple and ran away
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 4.23.43 PM.png}
+\item we can design features that we think are logical, and output some binary representation like $\phi(X=$run, y=Noun)=(0,1,0$\cdots$)
+\item so the feature maps effectively one hot encode if characteristics are in the input vector than we project that times our w (to get a compatibility score)
+\item so we ultimately want to max $w_{i}^{t}\phi_{i}(x,y))$  when a prediction is correct
+\item we do not need to include features that are not in our training data 
+\item this is a flexible model, we can capture a lot of things we are intrested 
+\item we can just take features from our training data 
+\item this is spare so quick for computation 
+\item can use a hash function to map our templates to discrete values 
+\item so so far we have done this with perceptron, but we can expand this to use an svm which gives a unique prediction that maximizes the functional margin, also svm allows for non-liniearly through kernel methods 
+\section{multiclass svm}
+\subsection*{margin for multiclass}
+\item recall in binary data our margin is $$m=y(f(x))=y(w^{t}x)$$ we want a large positive margin (representing high confidence predictions that are correct )
+\item \textcolor{blue}{class specific margin} for data points $x^{n},y^{n}$ $$h(x^n,y^n)-h(x^n,y)$$ so that is the divergence between the score of the correct class and another class 
+\item we want the margin to be large and positive $\forall y\neq y^{n}, \forall y\in [1,n]$ 
+\subsection*{multiclass separable svm}
+\item the binary constrained svm objective is $$min_{w}\frac{1}{2}||w||^{2}$$ $$\text{st}\quad m=y^{n}w^{t}x^{n}\geq 1, \quad \forall(x^n,y^n)\in \mathcal{D}$$
+\item \textcolor{blue}{kernel multiclass margin }$$m_{n,y}(w)=<w,\phi(x^{n},y^{n})>-<w,\phi(x^{n},y)>$$ that is the score of the true class minus the score of some other class 
+\item \textcolor{blue}{multi class constrained svm objective} $$min_{w}\frac{1}{2}||w||^{2}$$ $$st\quad m(n,y)(w)\geq 1 \quad \forall (x^{n},y^n)\in \mathcal{D}, \forall y\neq y^{n}\in [1\cdots k]$$
+\item as in binary class take 1 are our target margin 
+\subsection*{generalizing hinge loss}
+\item hinge loss is the convex paperbound of 0-1 zero one loss (meaning it is the min convex function that is always above zero one loss ) given by $$\ell_{hinge}(y,\hat{y}=max(0,1-yh(x)))$$
+\item multiclass zero one loss $$\delta(y,y')=\mathbb{I}(y\neq y')$$
+\item what is the upper bound of $\Delta(y,y')$
+\item call $\hat{y}=argmax_{y\in Y}<w,\phi(x,y')>$
+\item we know that $<w,\phi(x,y)>\quad \leq\quad <w,\phi(x,\hat{y})>\Rightarrow \Delta(y,\hat{y})\leq \Delta(y,\hat{y})-<w,(\phi(x,y)-\phi(x,\hat{y}))>$ 
+\item thus we have \textcolor{blue}{general hinge loss} $$\ell_{hinge}(y,x,w)=max_{y'\in Y}(\Delta(y,y')-<w, (\phi(x,y)- \phi(x,y'))>)$$
+\item so just substituting general hinge loss into the svm objective yields \textcolor{blue}{the multiclass svm objective}$$j(w)=max_{w\in R^{d}}\frac{1}{2}||w||^{2}+C\sum_{n}max_{y'\in Y}(\Delta(y,y')-<w,(\phi(x,y)-\phi(x,y'))>)$$
+\item we call $\Delta(y,y')$ \textcolor{blue}{the target margin for each class}  if $m_{n,y'}(w)\geq \Delta(y^n,y')\forall y\in Y$ there is no loss on example n 
+\subsection*{recap}
+\item so we are trying to solve multiclass problem
+\item solution 1: one vs all 
+\begin{enumerate}
+    \item train k models $h_{1}(x),\cdots h_{k}(x):X\rightarrow \mathbb{R}$
+    \item predict with argmax$_{y\in Y}h_{y}(x)$
+    \item but this can fail with linear models pretty easily 
+\end{enumerate}
+\item solution 2 multiclass loss 
+\begin{enumerate}
+    \item train one model $h(x,y):X\times y\rightarrow \mathbb{R}$
+    \item predict as $argmax_{y}h(x,y)$
+\end{enumerate}
+\item one vs all does well in practice for what it is worth 
+\item this generalizes to situating  where k is really large and where one vs all fails
+\item the key idea is that we can generalize across output oy by using features of y 
+\section*{intro to structured prediction}
+\subsection*{part of speech tagging}
+\item the task is given a give a part of speech tag for all words \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 5.04.40 PM.png}
+\item In this problem our input space is words of any sequence length so it is massive 
+\item our output space is also large as it is the length of the sequence times the number of part of sempach tags
+\subsection*{multiclass hypothesis space }
+\item suppose we have a discrete output space $y(x)$ that can be very large but has some structure, and the size depends on x 
+\item the basse hypothesis space is $\mathcal{H}=\{h:X\times Y\rightarrow \mathbb{R}\}$ where $h\in \mathcal{H}$ $h(x,y)$ is a compatibility score between input x and output y 
+\item our hypothesis space is $$\mathcal{F}=\{x\rightarrow argmax_{y}h(x,y)|h\in \mathcal{H}\}$$ which yields a final prediction function $f\in \mathcal{F}$ which has a underlying compatibility score function $h\in \mathcal{H}$ 
+\item suppose we are trying to tag \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 5.11.49 PM.png} 
+\item our hypothesis space is a linear combinations of feature map $h(x,y)=w^{t}\phi(x,y)$
+\item how can we define the feature map
+\subsection*{unary feature}
+\item \textcolor{blue}{a unary feature } only depends on the label at a singe position $y_i$ and x 
+\item so for instance it could be $$\phi(x,y_i)=\mathbb{I}((x_i=\text{runs})\land y_i=\text{verb})$$
+\item this is kinda like a nb assumption
+\subsection*{markov features}
+\item \textcolor{red}{markov} features only depend on the two adjacent labels  $y_{i-1}$ , $y_i$ and x 
+\item for instance $$\theta(x,y_{i-1}, y_{i})=1(y_{i-1}\text{pronouns)1(}y_i=\text{verb})$$
+\subsection*{local feature vector}
+\item at each position i in a sequence we define the \textcolor{blue}{local feature vector} $$\psi_{i}=(\theta_1(x,y_i),\cdots \phi_{1}(x,y_{i-1},y_i,x) )$$ so that is the feature that has all teh feature  that are relevant to that inptu  
+\item the local compatibility score at position i is $<w,\phi_{i}(x,y_{i-1}, y_i)>$ 
+\item the compatibility score of $(x,y)$ si the sum of there local compatibility scores $$\sum_{i}<w,\phi_{i}(x,y_{i-1},y_i)>=<w,\psi(x,y)>$$
+\item we can use the perceptron with on this set up to do structured prediction as well
+\subsection*{going to svm structured}
+\item we think of the zero one loss between two sequence as the hamming loss $$\Delta(y,y')=\frac{1}{L}\sum_{i=1}^{L}\mathbb{I}(y_i\neq y')$$
+\item then plugging this into our svm and using the structured feature transformation we get structured svm 
+\section*{argmax problem}
+\item to compute predictions we need $argmax_{y\in y(x)}<w,\psi(x,y)>$ and $|y(x)|$ is exponentially large (that is our prediction depends on the past)
+\item but note that $\psi(x,y)=\sum_{i}\psi_{i}(x,y)$ so we  can marginalize and solve this in code with a dynamic programming algorithm
+\subsection*{conditional random field}
+\item general logistic function is given as $$P(y|x)=\frac{1}{z(x)}e^{w^{t}\psi(x,y)}$$ where z is for normalization 
+\item if we plug markov features into this we can get a linear chain crf 
+\item has a nice probabilistic interpretation 
+\end{itemize}
+\end{document}

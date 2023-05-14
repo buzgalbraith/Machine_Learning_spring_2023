@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 3 SVM}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{maximum margin classifier}
+\begin{itemize}
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-12 at 12.17.08 PM.png}
+\item consider trying to learn a classifier for these linearly separable classes
+\item that task can be written as find a vector $w\in \mathbb{R}^{d}:\forall i\in [1,n] (w^tx_i)y_i>0 $
+\item keep in mind that a hyperplane is defined as the sec of vectors orthogonal to our vector w (plus some offset) that is $\{v\in \mathbb{R}^d: w^tv+b=0\}$
+\item we can do this simply with the Perceptron algorithm \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-12 at 12.21.31 PM.png}
+\item this more or less moves our hyperplane towards the misclassified points, as long as the data is linearly separable this will work 
+\item  \textcolor{red}{geometric margin} given a hyperplane G that separates a dataset the geometric margin is the distance to the hyperplane of the closest data point in our dataset that is $$min_{i}d(x_i,H)$$
+\item we know the vector w is orthogonal to the hyperplane so any point projected on w will be orthogonal to the  hyperplane that. so that is for an arbitrary vector v $$\frac{<v,w>}{||w||_{2}}$$
+\item we know that this projection is orthogonal to H and thus parallel to w  ie $\frac{<v,w>}{||w||_{2}}=\lambda w$
+\item notice that $x-h=P_{h^{\perp}}(x)=P_{w}(h)=\lambda w$ 
+\item meaning we can write $d(x,h)=||x-h||_{2}=||\lambda w||=|\lambda| ||w||_{w}= |\frac{w^tx+b}{||w||_2}|$ b here is an offset term. 
+\subsection*{minimize the margin}
+\item  our goal is to max the geometric margin that if $$max(min_i(d(x_i,H)))=max min_{i}\frac{y_i(w^tx_i+b)}{||w||_{2}}$$
+\item can re write as constrained max  as $$max M$$ $$\text{subject to }\frac{y_i(w^tx_i+b)}{||w||_{2}}\leq M \forall i$$
+\item note here that this will not give us a unique solution since this is not scale invariant
+\item   we can force uniqueness by adding a constraint to the norm of w that is let $||w||_{2}=\frac{1}{M}$ which allows us to write $$max \quad \frac{1}{||w||_{2}}$$ $$\text{subject to } y_i(w^tx_i+b)\geq 1  $$ $$\iff$$ $$min \quad \frac{1}{2}||w||_{2}^2$$ $$\text{subject to } y_i(w^tx_i+b)\geq 1  $$
+\item find max norm solution such that the functional margin is greater than 1 for all examples
+\item we can make this a soft margin classifier by adding a slack term which makes the problem $$min \quad \frac{1}{2}||w||^2_{2}+\frac{C}{n}\sum_{i=1}^{n}\epsilon_{i}$$ $$\text{subject to } y_i(w^tx_i+b)\geq 1-\epsilon_i \forall u, \epsilon_i\geq 0 \forall i$$
+\item $\epsilon $ are the slack we are given each exmample (ie how much we relax the margin constraint for it )
+\item C is a weighing term that penalizes more $||\epsilon_i||_{1}$
+\subsection*{minimize hinge loss}
+\item Perceptron loss is $\ell(x,y,w)=max(0,-yw^tx)$ that is zero if all points are correctly classified
+\item hinge loss is $\ell_{hinge}(x,w,y)=max(0,1-m)=max(0,1-y(w^tx))$ so we linearly penalize solution until they achieve a functional margin of 1 then ignore them 
+\item we can write SVM problem in terms of ERM over a linear hypotheses space plus and offset term (can also think of the space as the set of hyperplanes)
+\item with hinge loss 
+\item and l2 regularization 
+\item that is $$j(w,b)=\frac{1}{n}\sum_{i=1}^{n}\ell(f(w,b,x))+\lambda||w||_{2}=\frac{c}{n}max(0,1-y_i(w^tx_i+b))+\frac{1}{2}||W||^2_{2} $$
+\item can clearly re-write this as a constrained optimization problem as $$min\quad \frac{1}{2}||w||^{2}_{w}+\frac{c}{n}\sum_{i=1}^{n}\epsilon_{i}$$ $$\text{subject to } \epsilon_{i}\geq max(0,1-y_i(w^tx_i+b))$$
+\item so we can derive the objetive in either way and our new problem is to optimize it 
+\subsection*{sub-gradient descent}
+\item subgradient more or less generalizes a taylor expansion 
+\item a vector $g\in \mathbb{R}^{d}$ is \textcolor{blue}{a subgradient} of a convex function $f:\mathbb{R}^{d}\rightarrow \mathbb{R}$ at x if for all z $$f(z)\geq f(x)+g^t(z-x)$$
+\item so it just means the vector ie straight line implied by that function is bellow the function for all values of x\\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-12 at 12.21.31 PM.png}
+\item \textcolor{blue}{subgradient descent} move along a negative subgradient g that is $$x^{t+1}=x^t-\eta g \text{ where } g\in \partial f(x^t)\text{ and }\eta>0$$
+\item this can increase the objective function but will always get us closer to the arg min if f is convex and step size is small 
+\item it is slower than gradient descent but sometimes our best option 
+\item so given our svm objective  $$j(w,b)=\frac{1}{n}\sum_{i=1}^{n}\ell(f(w,b,x))+\lambda||w||_{2}=\frac{c}{n}max(0,1-y_i(w^tx_i+b))+\frac{1}{2}||W||^2_{2} $$
+\item we can see that the a subgradient is given by $2\lambda w \text{ if } 1-y_{i}w^tx_i\leq 1$ and $2\lambda w + y_ix_i $ other wise
+\item thus our subgradient descent algorithm is  \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-12 at 12.21.31 PM.png}
+\subsection*{dual problem}
+\item recall that in a geneal optimization problem with inequality constraints can be expressed as $$min \quad f_{0}(x)$$ $$\text{subject to } f_i(x)\leq 0 \forall i $$
+\item 
+\item we can write the \textcolor{blue}{Lagrangian form  } as $$\mathcal{L}(x,\lambda )= f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_i()x$$ this is a weighted sum of the objective and constraint functions, this process can treat hard constraints as soft ones 
+\item this defines the \textcolor{blue}{Lagrange dual function} as $$g(\lambda )= inf_{x}\mathcal{L}(x,\lambda )= inf_{x}(f_{0}(x)+\sum{i=1}^{m}\lambda_if_i(x))$$
+this has some nice properties namely that it is concave, and is a lower bound for our optimization problem 
+\item weak duality tells us that it the dual solution si a lower bound of the primal 
+\item strong duality says the solutions are equal
+\item if we have strong duality then we knw $f_{0}(x^{*})=G(\lambda^{*})=f_{0}(x^{*})+\sum_{i=1}^{m}\lambda_{i}^{*}f_{i}(x^{*})\leq  f_{0}(x^{*})$
+\item in other words $\sum_{i}\lambda^{*}f_{i}(x^{*})=0$ meaning that $$\lambda_{i}>0 \Rightarrow f_{i}(x^{*})=0 \text{ and }f_i(x^{*})<0\Rightarrow \lambda_0=0$$
+\item so our constraints are only active when our objective is zero, and our constraints are inactive when our objective is less than zero 
+\item \textcolor{blue}{the SVM primal } $$min\quad \frac{1}{2}||w||^{2}_{w}+\frac{c}{n}\sum_{i=1}^{n}\epsilon_{i}$$ $$\text{ subject to }-\epsilon_{i}\leq - \forall $$ $$(1-y_i[w^tx_i+b])-\epsilon_{i}\leq 0 \forall i$$
+
+\item svm has strong duality since the problem is convex (as long as we have  feasible points )
+\item the svm dual is $$sup_{\alpha\geq 0, \lambda \geq 0}inf_{w,b, \epsilon}L(w,\b , \epsilon, \alpha, \lambda )$$ $$=sup_{\alpha\geq 0, \lambda \geq 0}inf_{w,b, \epsilon}\frac{1}{2}||w||_{2}^{2}+\frac{c}{n}\sum_{i=1}^{n}\epsilon_{i}+\sum_{i=1}^{n}\alpha_{i}(1-y_i(w^tx_i+b)-\epsilon_i)+\sum_{i=1}^{n}\lambda_i(-\epsilon_i) $$
+\item solving this out yields that $\epsilon{i}=max(0,1-y_if*(x_i))$ is the hingle loss on that training example 
+\item it $y_if^{*}(x_i)>1$ then the margin loss is $\epsilon_{i}=0$ and we get $\alpha_{i}=0$ (ie points we can correctly classified are fine)
+\item if $y(f^{*}(x_i))<1$ then the margin loss is $\epsilon_i>-$ and $a\alpha_{i}=\frac{c}{n}$ (that makes sense we are adding a weighting constant )
+\item if $\alpha_i=0$ that is we know there is no loss ie $y_if^{*}(x)\geq 1$
+\item if $\alpha_{i}\in (0,\frac{c}{n})$ then $\epsilon_{i}=0$ meaning that our point is on the margin ie $1-y_if*(x_i)=0$
+\item \textcolor{red}{support vectors} are training points such that $\alpha_{i}\in [0,\frac{c}{n}]$ that is are on the marign 
+\item if there are few margin ie few support vectors  then we will have sparsity in input examples as $w^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}y_ix_i$ 
+\item so if $\alpha_i=0$ we dont weight the example 
+\item if $\alpha_{i}=\frac{c}{n}$ then $y_if(x_i)\leq 1$ so we weigh it 
+\item if $y_if(x_i)<1 $ then $\alpha_{i}=\frac{c}{n}$
+\end{itemize}
+\end{document}
