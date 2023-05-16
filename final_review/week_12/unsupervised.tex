@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 12: Clustering and EM}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{unsupervised learning}
+\begin{itemize}
+\item the goal is to discover unknown structure in the data 
+\item we try to estimate densities with some latent variable $\theta$  $$P(x|\theta)$$
+\section*{k means }
+\item dataset $\mathcal{D}=(x_1\cdots x_n)\subset X$ where $X\in \mathbb{R}^{d}$
+\item the goal is to partition D into k disjoint subsets $C_1\cdots C_k$
+\item let $c_i\in\{1\cdots k\}$ be the cluster assignment of data point $x_i$
+\item  the centroid of the data $C_i$ is defined as $$\mu_i=argmin_{\mu\in X}|||x-\mu||^{2}$$ so that is each centroid is the  mean of it's cluster 
+\item the objective is $$j(c,\mu)=\sum_{i=1}^{n}||x_i\mu_c||^{2}$$
+\item the k means algorithm is described here \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 2.24.47 AM.png}
+\item so there is an alternative behavior of picking the best cluster for each data point, and picking the best centroid for each cluster
+\item the objective of k means is non convex, so it can get stuck in bad local minima pretty easily
+\item can re run it multiple times to try to avoid this 
+\section*{gaussian mixture models}
+\item a generative model for X, done with MLE
+\item assume there are k sets up and we have the probability distribution of each 
+\item the generative story of a GMM is as follows
+\item this is how we generate data 
+\begin{enumerate}
+    \item chose a cluster $z\sim catagorical(\pi_1\cdots \pi_{k})$
+    \item chose a conditional distribution for that cluster $x|z\sim \mathcal{N}(\mu_{z},\Sigma_{z})$
+\end{enumerate}
+\item then we can get the marginal likelihood of our dataset by marginalizing over the latent variable z $$P(x)=\sum_{z}P(x,y)=\sum_{z}p(x|z)P(z)=\sum_{k}\pi_{k}\mathcal{N}(\mu_{k}, \Sigma_k)$$
+\item note that in GMMs the label of the cluster is not important 
+\item how do we learn the parameters $\mu_{k}, \pi_{k}, \Sigma_{K}$
+\item we can do mle $$L(\theta)=\sum_{i=1}^{n}logP(x_{i}|\theta)=\sum_{i=1}^{n}log(\sum_{z}P(x,z|\theta))$$ note that our class label and data points are connected so we can not just push log into the sum 
+\item there is no closed form solution for GMM
+\item so gradient descent is kind of involved
+\item if we had cluster assignments mle would be easy 
+\item we observe x and want to know z. $$P(z=j|x_i)=\frac{P(x,z=j)} {p(x)}=\frac{P(x|z=j)P(z=j)}{\sum_{k}P(x|z=k)P(z=k)}=\frac{\pi_{i}\mathcal{N}(x_i|\mu_{j},\Sigma_{j})}{\sum_{k}\pi_{k}\mathcal{N}(x_i|\mu_{k},\Sigma_{k})}$$
+\item think of $P(z|x)$ as a soft class assignment 
+\item if we knew $\mu, \Sigma, \pi$ that would be easy to compute
+\subsection*{expectation max for GMM}
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 2.45.02 AM.png}
+\item so we estimate using expectation maximization in this method we first intilize the parameters $\mu, \Sigma, \pi$ randomly 
+\item then alternate between teh E and M step until convergence 
+\item where the E step i gill in latent variables by inference (compute the soft class assignments $P(z|x_i)\forall i$) 
+\item M step: standard MLE for $\mu, \Sigma, \pi$ given our soft assignments. this is equivalent to mle in observable case on data weighed by $P(z|x_i )$  
+\subsection*{M step}
+\item let $P(Z|x)$ be the soft assigned 
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 2.50.04 AM.png}
+\subsection*{em for GMM summary}
+\item em is a genearl algorithm for leanring latent vairble mdoels 
+\item key dea is that if the data was fully observable MLE would be easy 
+\item E step fill in latent vaibles by comuting $P(z|x,\theta)$
+\item M step standard MLE given fully observable data 
+\item this si simpler and more efficent than graidnt methods 
+\item k means is a special case of EM for GMM wil hard assignments
+\section*{latent variable models}
+\subsection*{generative latent vairble models}
+\item two sets of random variables $Z, X$
+\item z is hidden unobserved variables
+\item x is observed variables
+\item joint probability model is parametrized by $\theta\in \Theta$ $$P(x,z|\theta)$$
+\item a latent variable model is a probability model for which certain varibles are never observed 
+\item x alone is incomplete data 
+\item (x,z) is complete data
+\subsection*{objectives}
+\item learning probelm given incomplete data find the mle $$\hat{\theta}=argmax_{\theta}P(x|\theta)$$
+\item the inference problem is $$P(z|x,\theta)$$
+\item there are cases where learning and inference are both hard 
+\subsection*{EM algorithm}
+\item at slide 88
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{itemize}
+\end{document}

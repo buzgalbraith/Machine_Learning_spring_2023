@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 10 boosting }
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{motivation}
+\begin{itemize}
+\item recall in ada boosting we learn weak learners $g_m(x)$ and weights $\alpha_{m}$ and use those to get our final predictor $G(x)=sing(\sum_{i=1}^{m}\alpha_mG_m(x))$
+\item why not just learn $G(x)$ directly? 
+\item well it is a linear sum of weak learners that are not nesscarrily linear so we learn it sequentially in ada boost
+\section*{nonlinear regression}
+\item we can find wide types of data by fitting a linear combination of transformations to the input $$f(x)=\sum_{m=1}^{m}v_{m}h_m(x)$$ where $h_m$ is called a basis function such that $$h_1\cdots h_m:X\rightarrow \mathbb{R}$$
+\item example polynomial regression $h_i(x)\in \{x^{i}:i\in \mathbb{Z}\}$ 
+\item we can fit this with standard linear models if our basis functions are fixed ahead of time all we are learning are weighting factors  
+\subsection*{adaptive bayes function model}
+\item what if we want to learn the basis functions
+\item we define a base hypotheses space $\mathcal{H}:X\rightarrow \mathbb{R}$ so all scalar values function
+\item an \textcolor{blue}{adaptive basis function expansion} over $\mathcal{H}$ is an ensample model $$f(x)=\sum_{m}^{M}v_mh_m(x)$$ where $v_m\in \mathbb{R}, h_{m}\in \mathcal{H}$
+\item so then we can combine these to get a new hypotheses space $$\mathcal{F}_{M}=\{\sum_{m}v_mh_m(x)|v_m\in \mathbb{R}, h_m\in \mathcal{H}\forall m\in[1...m]\}$$
+\item so we our objective is $$j(v_1\cdots v_m, h_1\cdots h_m)=\frac{1}{n}\ell(y_i,f(x_i))=\frac{1}{n}\ell(y_i,\sum_{m=1}^{M}v_mh_m(x))$$
+\item if we want to optimize this sometimes we can use gradient descent or find a closed form (but that is not always the case )
+\item in cases where we can not differentiate we can try using a greedy algorithm similar to ada boost
+\subsection*{gradient boosting }
+\item applies when ever our loss function is sub differentiable wrt our training predictions $f(x_i)$ we can do regressions with the hypothesis base space $\mathcal{H}$
+\section*{forward Stagewise adaptive modeling}
+\item to recap our goal is to find the model $$f(x)=\sum_{m}v_mh_m(x)$$ that is a weighed sum of basis functions given some loss function
+\item we do this by greedily fitting one function at a time without adjusting previous functions "forward Stagewise"
+\item so after $m-1$ stages we will have $$f_{m-1}=\sum_{i=1}^{m-1}v_ih_i$$
+\item and then at the mth round we are trying to find the basis function $h\in \mathcal{H}$ and $v_m>0$ such that $$f_m=f_{m-1}+v_mh_m=c+v_mh_m$$ improves our loss as much as possible 
+\item so this is what our algorithm looks like \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 10.18.27 PM.png}
+\item we are going to set our loss function as exponential ie $\ell(y,f(x))=e^{-yf(x)}$
+\item and assume our $\mathcal{H}=\{h:x\rightarrow \{-1,1\}\}$ that is our base functions are binary classifiers
+\item   \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 10.26.42 PM.png}
+\item so i mean the above is mainly algebra i am not sure if there is that much to it except for a helpful way to re-write the objective
+\item there is a lot of kind of messy algebra in this section that i am not sure is super useful
+\item the real take away is basically this a generalization of ada boost
+\item in practice this has a robustness issue since ada boost is not robust to outliers
+\subsection*{review}
+\item so far we have seen that using a basis function to obtain nonlinear model $f(x)=\sum_{m=1}v_mh_m(x)$ if you know the basis functions
+\item could use adaptive basis function models if you do not know the basis. 
+\item and forward stage wise additive modeling greedily fits $h_m$ to minimize average los 
+\item but fsam only works for some loss functions 
+\item we need a more general model 
+\section*{gradient boosting / any boost}
+\subsection*{FSAM with squared loss}
+\item our objective function is $$j(v,h)=\frac{1}{n}\sum_{i=1}^{n}(y_i-(f_{m-1}(x_i)+vh(x_i)))^2 $$ if $\mathcal{H}$ is closed under scaling then we can just set $v=1$ adn maximize and the model will adjust it's self 
+\item doing v=1 yields $$j(h)=\frac{1}{n}\sum_{i}([y_i-f_{m-1}(x_i)-h(x)])^{2}$$ this si equivalent to fitting function residuals with least squares regression
+\item  so we can think of this as sequentially building models such that each one minimizes least squared residuals with the ones before set 
+\subsection*{interpret the residual}
+\item so our objective $J(f)=\frac{1}{n}\sum_{i=1}(y_i-f(x_i))^2=\frac{1}{n}\sum_{i=1}(y_i-f_{m-1}(x)-f_m(x_i))^2$
+\item so we can see that $\frac{\partial J(j)}{\partial f(x_i)}=-2(y_i-f(x_i))$ this gradient with respect to f is saying how should we try to change the output of f to minimize square loss
+\item so in other words our residual is the gradient 
+\item so what we are doing at each step is learning $h\in \mathcal{H}$ to fit the residual $$f\leftarrow f+vh$$
+\subsection*{functional gradient descent}
+\item we want to minimize our objective $$J(f)=\sum_{i=1}^{n}\ell(y_i,f(x_i))$$
+\item not that $j(f)$ only depends at f evaluated at n training points that is $f=(f(x_1)\cdots f(x_n))^{t}$ so treating these as parameters we can write $$j(f)=\sum\ell(y_i,f_i)$$ 
+\item the negative gradient $-g$ is the vector of partial darivtives of the y with respect to $f_i=f(x_i)$
+\item with gradient descent the final predictor will be $$f_0+\sum v_t(-g_t)$$ that is at every step we are updating our parameters in the direction of the gradient 
+\item the unconstrained step direction $-g$ is called the “pseudo residual"
+\item so we only have h points which to use to estimate $h\in \mathcal{H}$ so we do projected least squares regression where $$min_{h\in \mathcal{H}}\sum(-g_i-h(x_i))^2$$ 
+\subsection*{recap}
+\item so we have the following objects 
+\begin{enumerate}
+    \item our objective function $$j(f)=\sum\ell(y_i,f(x_i))$$
+    \item unconstrained gradient $g\in \mathbb{R}^{n}$ wrt $f=(f(x_1)\cdots f(x_n))^t$ (so this is a true gradient of the loss function with respect to what we have learned so far )
+    \item then we have the projected negative gradient$h\in \mathcal{H}$ so that is $$h=argmin_{h\in \mathcal{H}}\sum_{i=1}^{n}(-g_i-h(x_i))^2$$
+    \item and we update our function at each step acording to this projected gradient $f\leftarrow f + vh$
+\end{enumerate}
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 11.17.34 PM.png}
+\subsection*{binomial boost with logistic loss}
+\item recall that logistic loss with $y\in [-1,1]$ 
+ $$\ell(y,f(x))=log(1+e^{-yf(x)})$$
+\item we can write it out and find our pseudo residual then plug that into our prediction function
+\section*{gradient tree boosting}
+\item one commong from of gradient boosting machine is to set the hyptoehsis space = to regression tree of a certian size
+\item  boosting is good at resisting overfitting 
+\item since there is implicit feature selection. we are greedtly selecting the best features (weak learners)
+\item also overfit resilient because as training goes on the impact of change becomes localized 
+\item still can overfit tho 
+\item could also try doing stochastic gradient boosting where we do the same process just as stochastic gradient descent 
+\item this can speed things up and also help prevent overfitting.
+\item 
+\end{itemize}
+\end{document}

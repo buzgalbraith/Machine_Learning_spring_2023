@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 9: Decision Trees}
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{Decision trees}
+\begin{itemize}
+\subsection*{Decision tree set up}
+\item we are going to focus on binary trees ie each node has max of 2 children 
+\item each node is a subset of data point 
+\item the data splits of each node only use a single feature
+\item predictions are made at terminal or leaf nodes 
+\item our goal is to find boxed $R_{1}\cdots R_j$ that minimize $$\sum_{j=1}^{j}\sum_{i \in R_{j}}(y_i-\hat{y}_{R_j})^2$$ subject to complexity constraints
+\item so that is the best disjoint subsets on which to split our input data 
+\item  we cant find the best overall possible subsets b/c computationally intractable but can greedly chose starting from the root until we hit  a stopping condition 
+\item they we predict a values in a terminal node as $$\hat{y}_{R_j}=E[y_i|x_i\in R_j]$$
+\subsection*{optimal splits}
+\item to keep the number of splits tractable we sort the points based on there values of what ever feature we are splitting on $$x_{j(1)}\cdots x_{j(n)}$$ points sorted with regard to the jth feature 
+\item any point between two adjacent features is equivalent so normally just take halfway point
+\subsection*{overfitting}
+\item Decision trees tend to over fit, they will on there own put every point in it's own region if just let keep splitting 
+\item there are a lot of ways to control for this, like limiting the total number of nodes, limiting number of terminal nodes, limiting tree depth , require minimum number of data points in a terminal node 
+\item could also prune a tree 
+\begin{enumerate}
+    \item so we first fit a really big tree 
+    \item then we prune the tree greedily cutting until validation accuracy stops improving 
+\end{enumerate}
+\subsection*{good splits}
+\item let $y-\{1\cdots k\}$ and let m represent region $R_m$ with $n_m$ observations in that node 
+\item the proportions of observations in that node with class k is given by $$\hat{p}_{m,k}=\frac{1}{n_m}\sum_{i:x_i\in R_m}\mathbb{I}(y_i=k)$$ and we predict the majority class ie class $K(m)=argmax_{k}\hat{p}_{mk}$
+\item three measure of node impurity 
+\begin{enumerate}
+    \item misclassification error  $$1-\hat{p}_{mk}(m)$$ that is just 1 minus the majority label, we want this to be low 
+    \item \textcolor{red}{gini index} $$\sum_{k=1}^{k}\hat{p}_{mk}(1-\hat{p}_{mk})$$ so this is saying given all classes we could predict, we take the product of those classes and there compleat and sum them, this encourages solutions that are close to zero or 1
+    \item \textcolor{blue}{entropy/information gain} $$-\sum_{k=1}^{k}\hat{p}_{mk}log(\hat{p}_{mk})$$
+\end{enumerate}
+\item which one works best is a case by case question \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 7.45.37 PM.png}
+\item overall we want to find the splits that minimize the average weighted  node impurity  $$\frac{n_lQ(R_l)+n_rQ(R_r)}{n_l+n_r}$$ where Q is a node impurity measure, and index l, r correspond to left and right nodes of some split 
+\item small trees at least are really interpretable (this falls off with size though)
+\subsection*{trees vs linear models}
+\item trees are really not good at capturing linear Decision boundary's but can capture non linear ones quite well
+\item Decision trees only model one feature at a time, and split on that so they do not know how to model the relationship between two features really. so something that has a constant relationship $y=x$ they will have to learn meany splits to try to split that space based on some rule corresponding to the value of just one feature
+\item trees are non-linear, the Decision boundary's they produce will not be linear
+\item trees are non metric, they do not rely on the geometry of the space they are in 
+\item they are non parametric, as in make no assumptions about how the data is disputed 
+\item additionally they are quite interpretable
+\item they are bad at capturing linear relationships in data though  
+\item they also have high variance and tend to overfit, that is they are sensitive to small changes in the training data 
+\section{bagging and random forests}
+\item point statistics are when we estimate some parameter about the data with the data 
+\item statistics are random variables so they have probability distributions called a \textcolor{red}{sampling distribution} 
+\item the standard deviation of the sampling distribution is called the standard error 
+\subsection*{variance of mean }
+\item let $\hat{\theta(D)}$ be an unbiased estimator with variance $\sigma^{2}$ 
+\item standard error of that estimator is $\sqrt{var(\hat{\theta}
+)}$
+\item consider taking a new estimator that takes the average of iif $\hat{\theta}_1\cdots \hat\theta_{n}$ where $\hat{\theta_i}=\hat{\theta}(D^{i})$ so that is estimator calculated on n idd data sets 
+\item this estimator will be unbiased and constant so we see that $$var(\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_i)=\frac{\sigma^{2}}{n}$$
+\item this holds for all point estimates on the data. averaging iid predictors will result in lower variance overall 
+\item we do not have independent training sets though 
+\subsection*{Bootstrap sample}
+\item we can simulate independent draws by bootstrapping ie drawing many sub-samples form our  data set with replacement and treating those as datasets to train many models 
+\item this often works well in practice
+\subsection*{Ensemble methods}
+\item the key ideas are 
+\begin{itemize}
+    \item combine multiple weak models into a single more powerful one 
+    \item average iid estimates reduce the variance with out changing  bias 
+    \item we can use a bootstrap to simulate independent samples and average them 
+    \item parallel ensemble methods (like bagging) build models independently 
+    \item sequential ensemble (like boosting ) models are built sequentially (at each step we try to improve on what the last model did poorly on )
+    
+
+\end{itemize}
+\section*{bagging }
+\item draw $B$ bootstrap samples $D^{1}\cdots D^{N}$ from our original data $\mathcal{D}$
+\item train b independent predictors on each dataset $\hat{f}_{i}(D^{i})$ 
+\item then our \textcolor{blue}{bagged prediction function} is some combination of our estimators that is $$\hat{f}_{avg}(x)=combine(\hat{f}_1(x)\cdots \hat{f}_b(x))$$
+\item general method that is often used with trees 
+\item reduces overfitting, and variance 
+\item but makes the final estimator less interpretable
+\subsection*{out of bag error}
+\item each estimator is only trained on roughly $\frac{2}{3}$ of the data , so the remaining $\frac{1}{3}$ of the data can be used as a validation set 
+\item bagging does well \textbf{when the base learners are unbiased but have high variance}
+\subsection*{correlated predictions}
+\item for $\hat{\theta}_1\cdots \hat{\theta}_n$ idd where $E[\hat{\theta}]=\theta, var(\hat{\theta})=\sigma^{2}$
+\item what happens if the estimator are not independent that is correlated?
+\item  however $var(\frac{1}{n}\Sigma_{i=1}^{n}\hat{\theta_i}=$ $cov(\frac{1}{n}\Sigma_{i=1}^{n}\theta_i,\frac{1}{n}\Sigma_{j=1}^{n}\theta_j)=\frac{1}{n^2}cov(\Sigma_{i=1}^{n}\theta_i,\Sigma_{j=1}^{n}\theta_j)=\Sigma_{i=1}^{n}\Sigma_{j=1}^{n}\frac{1}{n^2}cov(\theta_i,\theta_j)=\frac{1}{n}^2(\Sigma_{i=1}^{n}var(\theta_i)+\Sigma_{j\geq i}cov(\theta_i, \theta_j)=\frac{\sigma^2}{n}+\frac{1}{n^2}\Sigma_{i=1}^{n}\Sigma_{j\geq i}cov(\theta_i, \theta_j)$
+\item so when they are correlated that covariance term will dominate since we are not taking independent samples from the join $P_{x\times y}$
+\item we can reduce this dependance between estimates using random forests
+\item bootstrap samples are independent samples from the training set, but not independent samples from the joint distribution $P_{x\times y}$ (that is the distribution of clasesses with our dataset may not match that of the true data generating process)
+\subsection*{random forests}
+\item teh idea is to build a collection of trees except when constructing  each tree node restrict the choice of splitting variable to a random subset of features 
+\item when this is the case, a small subset off features can not deaminate all trees  
+\item note that this does not eliminate all corelation between trees it just reduces it  
+\item the choice of m (ie the size of subset of features we chose is important )
+\section*{boosting }
+\item bagging : reduce the variance of low bias, high variance estimators by enfeebling many estimators trained in parallel (on different bootstrapped datasets ) 
+\item boosting: reduce the error rate of high bias estimators by enameling many estimators in a trained sequence
+\item the main  idea is instead of fitting the data very closely using  one large Decision tree, train gradually using a sequence of simpler trees 
+\subsection*{boosting overview}
+\item \textcolor{blue}{a weak learner (base learner)} is a classifier that just does a bit better than chance 
+\item weak learners learn simple rules about the data one at a time 
+\item the key ideas is that each weak learner focus on a different part of the training examples (re-weighted data) , and by doing this each can make a different contribution to the final prediction model
+\item a set of smaller simpler trees may be more interpretable 
+\subsection*{ada boost}
+\item binary classification, with bay hypothesis space $\mathcal{H}=\{h:X\rightarrow \{-1,1\}\}$ that is we learning functions that map our input space to the output space. 
+\item each base learner is trained on the weighted data. 
+\item training set $\mathcal{D}=\{(x_1,y_1)\cdots (x_n,y_n)\}$
+\item weights are $w\in \mathbb{R}^{n}$ are associated with the examples
+\item the \textcolor{blue}{weighted empirical risk} is $$\hat{R}_{n}^{w}(f):=\frac{1}{W}\sum_{i=1}^{n}w_i\ell(f(x_i),y_i)$$ where $W=\sum_i w_i$
+\subsection*{sketch of ada boost}
+\item start with equal weights $w_{i}=1\forall i\in[1,n]$
+\item repeat for $m=1\cdots M$ (where M is the number of classifiers we want ot train )
+\item train base classifier $G_{m}(x)$ on the weighted training data, this classifier may not fit well
+\item increase the value of weights in elements that $G_{m}(x)$ got wrong 
+\item our final predictor is $G(x)=sign[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)]$ $\alpha$ is another weighting parameter but for our model 
+\item we want $\alpha_m$ to be non negative and larger for $G_m$ that do well
+\item the weighted zero one loss of $g_m$ is $$err_{m}=\frac{1}{W}\sum_{i=1}^{n}w_i\mathbb{I}(y_i\neq G_m(x_i))$$ so that is a weighted average of the points the classifier missed with added weight on the points it was assigned to focus on  
+\item then we set $\alpha_m=ln(\frac{1-err_{m}}{err_m})$ so that means having higher weighted error for na estimator means that estimator will have lower weight in our final prediction 
+\item here is the full algorithm \\ \includegraphics*[width=10cm]{images/Screenshot 2023-05-14 at 8.50.10 PM.png}
+\item so notice here that we update our weights at each step to take into account the classifier weights that is $w_{i}\leftarrow w_{i}e^{\alpha_m}=w_i\frac{1-err_m}{err_m}$
+\item so that is if one of our estimators did badly on points it was supposed to do well on we increase the weights on those points further for the next estimator
+\item ada boost does not tend to overfit 
+\item  then there is this weird filtering for faces example
+\end{itemize}
+\end{document}

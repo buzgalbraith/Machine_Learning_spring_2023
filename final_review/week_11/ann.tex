@@ -1,0 +1,106 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{Lecture 11:Feature learning, neural networks and back propagation }
+\author{wbg231 }
+\date{December 2022}
+\newcommand{\R}{$\mathbb{R}$}
+\newcommand{\B}{$\beta$}
+\newcommand{\A}{$\alpha$}
+\newcommand{\D}{\Delta}
+
+\newcommand{\avector}[2]{(#1_2,\ldots,#1_{#2})}
+\newcommand{\makedef}[2]{$\textbf{#1}$:#2 }
+\usepackage{tikz,graphicx,hyperref,amsmath,amsfonts,amscd,amssymb,bm,cite,epsfig,epsf,url}
+
+\begin{document}
+
+\maketitle
+
+\section{introduction}
+\begin{itemize}
+\subsection*{Feature engineering}
+\item many problems are non-linear 
+\item we can express certain non linear problems as a linear combination of a feature map $$f(x)=w^{t}\phi(x)$$
+\item if we are explicitly specifying a feature map then the task comes down to decomposing our problem into sub-problems that can be combined in a linear way
+\subsection*{perceptron's as logic gates}
+\item perceptrons learn a hyperplane that separates linearly sparable data
+\item this works to repent simple and or logic gates. 
+\item note that this will not work for tasks that are non linearly sparable 
+\item for example if we have $x\in \mathbb{R}^{2}$ and we want to know if $x_1=x_2$ then $w^{t}x=w_1(x)+w_2(x_2)=w_1+w_2>0$ if they are both 1, and 0 if they are both 0 then $w_1+w_1=0$ so in other words we can not make a line (in 2 d space) separating the classes
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 12.13.33 AM.png}
+\item so if we add a a second perceptron we can separate these classes
+\item how you can think of this is that the first perceptron is in effect a feature map, which sends $x\rightarrow \phi(x)$ where $\phi(x)$ is a space where the classes can be separated 
+\subsection*{neural networks}
+\item the key idea is to learn the intermediate features as opposed to explicitly building them  
+\item \textcolor{blue}{feature engineering} medially specifying a feature map $\phi $ based on domain knowledge then learn weights $w$ $$f(x)=w^t\phi(x)$$
+\item \textcolor{blue}{feature learning } learn both the features (K hidden units) and the weights $$h(x)=[h_1(x)\cdots h_k(x)]$$ $$f(x)=w^{t}h(x)$$
+\subsection*{activation function}
+\item think of hidden layers as feature representations, we like to think of these feature representations as either absent (ie zero) or if they exist passed a certain threshold taking some value 
+\item so the activation function encodes this it applies non-linearity on the inputs and fires after some threshold $$h_{i}(x)=\sigma(v_i^{t}x)$$
+\item so we can write a two layer networks as $$f(x)=\sum_{k=1}^{k}w_{k}h_{k}(x)=\sum_{k=1}^{k}w_k\sigma(v_{k}^{t}x)$$  
+\item the hyperbolic tangent function is a common activation function \\  \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 12.25.24 AM.png}
+\\ note that this function basically gives activates when the magintude of it's input are away from zero 
+\item \textcolor{blue}{relu activation function} $$\sigma(x)=max(0,x)$$ does not fire until x is greater than zero and then fires linearly after that 
+\subsection*{universal approximation theorem}
+\item \textcolor{blue}{universal approximation theorem} a neural net with one possibly huge hidden layer $\hat{F}(x)$ can approximate any continuous function a closed and bounded subset under mild $\forall \epsilon>0 $ there exists an integer N such that $$\hat{F}(x)=\sum_{i=1}^{n}w_{i}\sigma(v_i^tx+b)$$ satisfies $$||\hat{F}(x)-F(x)||<\epsilon$$
+\item the take away is as long as the function is continuous (ie it has a non-infinite rate) on some subset we can in theory approximate it using neural networks
+\item note that in this set up the number of hidden units is exponential in d
+\section*{deep neural networks}
+\item \textcolor{blue}{a deep neural network} is one that can be both wide (ie have hidden layers) with many hidden units, as well as deep ie have hidden many hidden layers
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 12.25.24 AM.png}
+\item \textcolor{blue}{Multi layer perceptron definition}
+\item input space $x\in \mathbb{R}^{d}$ action space $A=\mathbb{R}^{k}$ (for a k class classification task )
+\item let $\sigma:\mathbb{R}\rightarrow \mathbb{R}$ be an activation function 
+\item suppose we have L hidden layers each having M hidden units 
+\item the first hidden layer is given by $$h^{1}(x)=\sigma(W^{1}x+\beta)$$ where $W^{1}\in \mathbb{R}^{m \times d}$ $b\in \mathbb{R}^{m}$ and $\sigma$ is applied to each entry of it's argument 
+\item each of the following hidden layers is passed $o\in \mathbb{R}^{m}$ which is the output and produces $$h^{j}(o^{j-1})=\sigma(W^{j}o^{j-1}+b^{j})$$ where $W^{j}\in \mathbb{R}^{m\times m}$
+\item and the last layer (output layer is an affine function) that is with no activation function $$a(o^l)=W^{L+1}O^l+b^{l+1}$$ where $W^{l+1}\in \mathbb{R}^{k\times m}$ and $b^{l+1}\in \mathbb{R}^{k}$
+\item the last layer gives us our scores 
+\item then we try to maximize a non-linear score function that maps our scores to probabilities like the soft max function $$argmax_{f_1\cdots f_k}\sum_{i=1}^{n}log(softmax(f_1(x)\cdots f_k(y))_{y_i})$$
+\item so we are in effect maximizing the log likelihood of representations of the training data 
+\item so keep in mind the input layer has no learnable parameters it is just the inputs 
+\item the hidden layer is affine plus some non-linear activation function 
+\item the output layer is an affine function that is then passed to some scoring function 
+\subsection*{fitting parameters for MLP}
+\item suppose $X=\mathbb{R}$ that is we have one dimensional input data
+\item our action adn output space are real numbers
+\item out hypothesis space is a mlp with 3 hidden node layes $$f(x)=w_{0}+w_1h_1(x)+w_2h_2(x)+w_3g_3(x)$$ where $h_i(x)=\sigma(v_ix+b_i)$
+\item we need to fit $b_1, b_2, b_3, v_1,v_2,v_3, w_0,w_1,w_2,w_3\in \mathbb{R}$
+\item think of all parameters tighter as $\theta\in \mathbb{R}^{10}$ our goal is to find $$\hat{\theta}=argmin_{\theta\in \mathbb{R}^{10}}\frac{1}{n}\sum_{i=1}^{n}(f(x_i,\theta)-y_i)^{2}$$
+\item we can do gradient descent and extend it to back propagation which is a systematic and efficient way to get gradient  
+\subsection*{computation graph}
+\item we can represent each component of the network as a node tat takes a set of inputs and produces outputs 
+\item suppose we have this computation graph \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 12.57.42 AM.png}
+\item let $g(x)=Mx+c$ for $M\in \mathbb{R}^{n\times p}$ and $c\in \mathbb{R}$
+\item $let b=g(a)=Ma+c$
+\item what is bi? $$b_i=\sum_{k=1}^{p}M_{i,k}a_k+c_i$$
+\item note that $\frac{\partial b_i}{\partial a_j}=M_{i,j}$
+\subsection*{least squares example}
+\item hypothesis space $$\{f(x)=w^{t}x+b|w\in \mathbb{R}^{d}, b\in \mathbb{R}\}$$ so affine functions 
+\item dataset $((x_1,y_1),\cdots ,(x_n,y_n))\in \mathbb{R}^{d}\times \mathbb{R}$
+\item our loss function in this contest is $$\ell_{i}(w,b)=[(w^{t}x_i+b)-y_i]^{2}$$
+\item in stochastic gradient descent we  take steps $$w_{j}\leftarrow w_{j}-\eta \frac{\partial \ell_{i}(w,b)}{\partial w_j}\forall j\in [1,d]$$ and $$b\leftarrow b-\eta\frac{\partial \ell_{i}(w,b)}{\partial b}$$
+\item for training point $\ell(w,b)=(w^{t}x+b-y)^{2}=(r)^{2}$
+\item then we can find the partial darivatives for this question as \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 1.20.38 AM.png}
+\subsection*{backpropigation example}
+\item to learn we need to run gradient descent to find the parameters that minimize our objective
+\item backpropigation we compute the gradient wrt to each trainable parameter
+\item this has to steps
+\begin{enumerate}
+    \item compute intermediate function value ie output of each node
+    \item compute the partial derivative of j with respect to all intermediate values and model parameters
+\end{enumerate}
+\item we can optimize this with path sharing each node cashes it's intermediate results and we dont need to compute them multiple times (this is dynamic programming :)
+\subsection*{forward pass }
+\item order the nodes by topological sort (ie every node appears before it's children)
+\item for each node compute the output given the input
+\item so the forward pass from $f_i\rightarrow f_j$ looks like this \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 1.34.07 AM.png} 
+\subsection*{backwards pass}
+\item order the nodes in reverse topological order so every child comes before every parent 
+\item for each node find it's partial derivatives with respect to it's inputs, multiplied by the partial derivatives of it's children (the chain rule)
+\item \includegraphics*[width=10cm]{images/Screenshot 2023-05-15 at 1.38.11 AM.png}
+\item it is better to do backwards since, we have a scaler output and vector input so it takes less memory to store
+\item local mins, snaffle points,flat regions, and high curvature areas are all issues
+\item learning rates are an important parameter to pay attention to in practice
+\end{itemize}
+\end{document}
